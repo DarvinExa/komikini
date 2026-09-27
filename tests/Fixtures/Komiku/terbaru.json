@@ -1,0 +1,24 @@
+{
+  "status": true,
+  "data": [
+    {
+      "title": "Jujutsu Kaisen",
+      "slug": "jujutsu-kaisen",
+      "thumbnail": "https://img.komiku.id/uploads/jjk.jpg",
+      "type": "manga",
+      "latest_chapter": "Ch. 270",
+      "rating": "8.7"
+    },
+    {
+      "title": "Tower of God",
+      "slug": "tower-of-god",
+      "thumbnail": "https://img.komiku.id/uploads/tog.jpg",
+      "type": "manhwa",
+      "latest_chapter": "Ch. 600",
+      "rating": "9.1"
+    }
+  ],
+  "has_next_page": true,
+  "has_prev_page": false,
+  "total_pages": 50
+}

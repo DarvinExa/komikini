@@ -1,0 +1,37 @@
+{
+  "title": "One Piece",
+  "alternative_title": "Wan Pīsu",
+  "thumbnail": "https://img.komiku.id/uploads/one-piece.jpg",
+  "type": "manga",
+  "status": "Ongoing",
+  "author": "Eiichiro Oda",
+  "synopsis": "Gol D. Roger adalah Raja Bajak Laut yang diakui sebagai yang terkuat.",
+  "genres": [
+    { "name": "Action", "slug": "action" },
+    { "name": "Adventure", "slug": "adventure" },
+    { "name": "Fantasy", "slug": "fantasy" }
+  ],
+  "chapters": [
+    {
+      "title": "Chapter 1110 - Planet Bintang",
+      "chapter_key": "chapter-1110",
+      "chapter_number": "1110",
+      "slug": "one-piece-chapter-1110",
+      "release_date": "2024-03-15"
+    },
+    {
+      "title": "Chapter 1109 - Hambatan",
+      "chapter_key": "chapter-1109",
+      "chapter_number": "1109",
+      "slug": "one-piece-chapter-1109",
+      "release_date": "2024-03-08"
+    },
+    {
+      "title": "Chapter 1 - Romance Dawn",
+      "chapter_key": "chapter-1",
+      "chapter_number": "1",
+      "slug": "one-piece-chapter-1",
+      "release_date": "1997-07-22"
+    }
+  ]
+}

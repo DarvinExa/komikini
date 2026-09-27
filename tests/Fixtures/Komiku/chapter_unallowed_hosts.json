@@ -1,0 +1,12 @@
+{
+  "title": "Untrusted Images Chapter",
+  "chapter_number": "1",
+  "images": [
+    "https://img.komiku.id/uploads/valid-page.jpg",
+    "http://insecure-http.komiku.id/page.jpg",
+    "https://evil-attacker.com/malicious.jpg",
+    "http://127.0.0.1/admin.jpg",
+    "http://169.254.169.254/latest/meta-data/",
+    "https://192.168.1.1/internal.jpg"
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "One Piece",
+    "endpoint": "/manga/one-piece/",
+    "thumbnail": "https://img.komiku.id/uploads/one-piece.jpg",
+    "type": "manga",
+    "latest_chapter": "Chapter 1110",
+    "rating": "9.5",
+    "description": "Petualangan Monkey D. Luffy mencari harta karun One Piece."
+  },
+  {
+    "title": "Solo Leveling: Ragnarok",
+    "endpoint": "/manhwa/solo-leveling-ragnarok/",
+    "thumbnail": "https://cdn.komiku.id/uploads/solo-leveling.jpg",
+    "type": "manhwa",
+    "latest_chapter": "Chapter 25",
+    "rating": "8.9",
+    "description": "Kisah penerus Sung Jin-woo di dunia monster."
+  }
+]

@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\DTO\Comic;
+
+use App\Enums\ComicType;
+
+readonly class ComicItem
+{
+    public function __construct(
+        public string $slug,
+        public string $title,
+        public ?string $thumbnailUrl = null,
+        public ComicType $comicType = ComicType::UNKNOWN,
+        public ?string $latestChapter = null,
+        public ?string $rating = null,
+        public ?string $description = null,
+    ) {}
+
+    /**
+     * Convert to array for serialization and Inertia props.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'thumbnail_url' => $this->thumbnailUrl,
+            'comic_type' => $this->comicType->value,
+            'latest_chapter' => $this->latestChapter,
+            'rating' => $this->rating,
+            'description' => $this->description,
+        ];
+    }
+
+    /**
+     * Instantiate from serialized array.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            slug: (string) ($data['slug'] ?? ''),
+            title: (string) ($data['title'] ?? ''),
+            thumbnailUrl: isset($data['thumbnail_url']) ? (string) $data['thumbnail_url'] : null,
+            comicType: ComicType::fromUpstream($data['comic_type'] ?? null),
+            latestChapter: isset($data['latest_chapter']) ? (string) $data['latest_chapter'] : null,
+            rating: isset($data['rating']) ? (string) $data['rating'] : null,
+            description: isset($data['description']) ? (string) $data['description'] : null,
+        );
+    }
+}
