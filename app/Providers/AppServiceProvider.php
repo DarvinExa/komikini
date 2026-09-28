@@ -86,6 +86,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('comment-create', function (Request $request) {
+            return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('comment-report', function (Request $request) {
+            return Limit::perMinutes(60, 5)->by($request->user()?->id ?: $request->ip());
+        });
+
         // Register Policies
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);

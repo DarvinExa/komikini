@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class CommentReport extends Model
 {
+    use HasFactory, LogsActivity;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -37,6 +42,18 @@ class CommentReport extends Model
     }
 
     /**
+     * Activity log options for report audits.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['status', 'resolved_by', 'resolved_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('comment_report');
+    }
+
+    /**
      * Get the user who reported the comment.
      */
     public function reporter(): BelongsTo
@@ -50,5 +67,13 @@ class CommentReport extends Model
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
+    }
+
+    /**
+     * Get the user who resolved the report.
+     */
+    public function resolver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'resolved_by');
     }
 }

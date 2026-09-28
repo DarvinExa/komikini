@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ChapterPayload, PageProps } from '@/types';
+import CommentSection from '@/Components/CommentSection';
 
 interface ReaderProps {
     comic: {
@@ -354,6 +355,13 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                         </Link>
                     </div>
                 </section>
+
+                {/* Community Comments & Discussion */}
+                <CommentSection
+                    comicSlug={comic.slug}
+                    chapterKey={chapter.chapter_key}
+                    currentUser={auth.user}
+                />
             </main>
 
             {/* Mobile Bottom Ergonomic Bar */}

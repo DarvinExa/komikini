@@ -96,6 +96,7 @@ class ChapterReaderController extends Controller
 
             return Inertia::render('Comic/Reader', [
                 'comic' => [
+                    'id' => $comic->id,
                     'slug' => $comic->slug,
                     'title' => $comic->title,
                 ],

@@ -135,4 +135,28 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Bookmark::class);
     }
+
+    /**
+     * Get the comments authored by the user.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get the comment reactions made by the user.
+     */
+    public function commentReactions(): HasMany
+    {
+        return $this->hasMany(CommentReaction::class);
+    }
+
+    /**
+     * Get the comment reports submitted by the user.
+     */
+    public function commentReports(): HasMany
+    {
+        return $this->hasMany(CommentReport::class, 'reporter_id');
+    }
 }

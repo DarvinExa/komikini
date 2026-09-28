@@ -97,6 +97,31 @@ export interface BookmarkItem {
     comic_type: ComicType;
     created_at: string;
 }
+export interface CommentUser {
+    id: number;
+    name: string;
+    username: string;
+    avatar_url: string | null;
+}
+
+export interface CommentItem {
+    id: number;
+    public_id: string;
+    parent_id: number | null;
+    user: CommentUser;
+    body: string;
+    status: 'published' | 'hidden' | 'deleted';
+    edited_at: string | null;
+    created_at: string;
+    human_time: string;
+    likes_count: number;
+    user_has_liked: boolean;
+    can_edit: boolean;
+    can_delete: boolean;
+    can_moderate: boolean;
+    moderation_reason: string | null;
+    replies: CommentItem[];
+}
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     appName: string;

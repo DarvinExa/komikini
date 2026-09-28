@@ -70,6 +70,10 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): Response
     {
+        if ($user->isSuspended()) {
+            return Response::deny('Akun yang ditangguhkan tidak dapat menghapus komentar.');
+        }
+
         if ($user->id === $comment->user_id || $user->hasPermissionTo('comments.delete')) {
             return Response::allow();
         }
