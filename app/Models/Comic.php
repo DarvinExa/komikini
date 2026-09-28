@@ -61,6 +61,30 @@ class Comic extends Model
     }
 
     /**
+     * Get the view events for the comic.
+     */
+    public function viewEvents(): HasMany
+    {
+        return $this->hasMany(ComicViewEvent::class);
+    }
+
+    /**
+     * Get the reading histories for the comic.
+     */
+    public function readingHistories(): HasMany
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
+    /**
+     * Get the bookmarks for the comic.
+     */
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    /**
      * Upsert minimum metadata from ComicDetail DTO into local database.
      */
     public static function upsertFromDetail(ComicDetail $detail): self

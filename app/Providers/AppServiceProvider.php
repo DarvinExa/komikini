@@ -6,14 +6,18 @@ namespace App\Providers;
 
 use App\Contracts\ComicProviderInterface;
 use App\Enums\SystemRole;
+use App\Models\Bookmark;
 use App\Models\Comment;
 use App\Models\CommentReport;
+use App\Models\ReadingHistory;
 use App\Models\Role;
 use App\Models\SystemSetting;
 use App\Models\User;
+use App\Policies\BookmarkPolicy;
 use App\Policies\CommentPolicy;
 use App\Policies\CommentReportPolicy;
 use App\Policies\PermissionPolicy;
+use App\Policies\ReadingHistoryPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\SystemSettingPolicy;
 use App\Policies\UserPolicy;
@@ -78,6 +82,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by($request->ip());
         });
 
+        RateLimiter::for('progress', function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
+        });
+
         // Register Policies
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
@@ -85,6 +93,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Comment::class, CommentPolicy::class);
         Gate::policy(CommentReport::class, CommentReportPolicy::class);
         Gate::policy(SystemSetting::class, SystemSettingPolicy::class);
+        Gate::policy(ReadingHistory::class, ReadingHistoryPolicy::class);
+        Gate::policy(Bookmark::class, BookmarkPolicy::class);
 
         // Superadmin Gate::before with invariant protections
         Gate::before(function ($user, string $ability, array $arguments = []): ?bool {

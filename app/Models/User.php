@@ -9,6 +9,7 @@ use Database\Factories\UserFactory;
 use DomainException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -117,5 +118,21 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'suspended_until' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the reading histories for the user.
+     */
+    public function readingHistories(): HasMany
+    {
+        return $this->hasMany(ReadingHistory::class);
+    }
+
+    /**
+     * Get the bookmarks for the user.
+     */
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
     }
 }

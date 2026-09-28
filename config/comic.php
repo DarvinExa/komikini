@@ -26,8 +26,11 @@ return [
     'image_allowed_hosts' => array_filter(array_map('trim', explode(',', env('KOMIKU_IMAGE_ALLOWED_HOSTS', '')))) ?: [
         'komiku.id',
         'komiku.org',
+        'komiku.to',
         'komiku-rest-api.vercel.app',
+        'komik-api-wine.vercel.app',
         'img.komiku.id',
+        'img.komiku.org',
         'cdn.komiku.id',
         'i0.wp.com',
         'i1.wp.com',
@@ -70,5 +73,13 @@ return [
                 'stale' => 604800,      // 7 days
             ],
         ],
+    ],
+
+    /*
+     * View tracking and qualified deduplication configuration
+     */
+    'views' => [
+        'deduplication_hours' => (int) env('VIEW_DEDUPLICATION_HOURS', 6),
+        'retention_days' => (int) env('RAW_VIEW_RETENTION_DAYS', 90),
     ],
 ];

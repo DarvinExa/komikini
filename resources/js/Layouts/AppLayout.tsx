@@ -21,6 +21,7 @@ export default function AppLayout({ title, description, children }: AppLayoutPro
         { href: '/type/manhwa', label: 'Manhwa' },
         { href: '/type/manhua', label: 'Manhua' },
         { href: '/genre', label: 'Genre' },
+        { href: '/pustaka', label: 'Pustaka' },
     ];
 
     return (
@@ -70,6 +71,12 @@ export default function AppLayout({ title, description, children }: AppLayoutPro
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         {user ? (
                             <div className="hidden sm:flex items-center gap-2 sm:gap-3">
+                                <Link
+                                    href="/pustaka"
+                                    className="font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#333333] hover:border-[#BAD306] hover:text-[#BAD306] px-2.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
+                                >
+                                    Pustaka
+                                </Link>
                                 <Link
                                     href="/profile"
                                     className="font-display text-xs tracking-wider uppercase text-[#F8F8F8] hover:text-[#BAD306] px-2 py-1.5 border border-transparent hover:border-[#444444] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"

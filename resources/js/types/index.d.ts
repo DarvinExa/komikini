@@ -56,6 +56,48 @@ export interface ComicDetail {
     latest_chapter: ChapterItem | null;
 }
 
+export interface ChapterPayload {
+    comic_slug: string;
+    chapter_key: string;
+    chapter_number: string;
+    title: string;
+    images: string[];
+    prev_chapter_key: string | null;
+    next_chapter_key: string | null;
+}
+
+export interface UserHistory {
+    chapter_key: string;
+    chapter_number: string;
+    last_image_index: number | null;
+    progress_percent: number;
+    read_at: string;
+}
+
+export interface ReadingHistoryItem {
+    id: number;
+    comic_id: number;
+    comic_slug: string;
+    comic_title: string;
+    comic_thumbnail: string | null;
+    chapter_key: string;
+    chapter_number: string;
+    last_image_index: number | null;
+    progress_percent: number;
+    read_at: string;
+    completed_at: string | null;
+}
+
+export interface BookmarkItem {
+    id: number;
+    comic_id: number;
+    comic_slug: string;
+    comic_title: string;
+    comic_thumbnail: string | null;
+    comic_type: ComicType;
+    created_at: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     appName: string;
     auth: {

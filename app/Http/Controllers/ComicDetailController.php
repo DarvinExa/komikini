@@ -37,8 +37,33 @@ class ComicDetailController extends Controller
                 Log::error("Gagal melakukan upsert metadata komik [{$slug}]: {$e->getMessage()}");
             }
 
+            $user = $request->user();
+            $userHistory = null;
+            $isBookmarked = false;
+
+            if ($user) {
+                /** @var Comic|null $localComic */
+                $localComic = Comic::where('slug', $slug)->first();
+                if ($localComic) {
+                    $history = $user->readingHistories()->where('comic_id', $localComic->id)->first();
+                    if ($history) {
+                        $userHistory = [
+                            'chapter_key' => $history->chapter_key,
+                            'chapter_number' => $history->chapter_number,
+                            'last_image_index' => $history->last_image_index,
+                            'progress_percent' => (float) $history->progress_percent,
+                            'read_at' => $history->read_at->toISOString(),
+                        ];
+                    }
+
+                    $isBookmarked = $user->bookmarks()->where('comic_id', $localComic->id)->exists();
+                }
+            }
+
             return Inertia::render('Comic/Show', [
                 'comic' => $detail->toArray(),
+                'userHistory' => $userHistory,
+                'isBookmarked' => $isBookmarked,
             ]);
         } catch (ComicNotFoundException) {
             abort(404, "Komik [{$slug}] tidak ditemukan.");

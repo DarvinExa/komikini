@@ -1,15 +1,43 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { ComicDetail } from '@/types';
+import { ComicDetail, PageProps, UserHistory } from '@/types';
 import { ChapterList } from '@/Components/ChapterList';
 
 interface ShowProps {
     comic: ComicDetail;
+    userHistory?: UserHistory | null;
+    isBookmarked?: boolean;
 }
 
-export default function Show({ comic }: ShowProps) {
+export default function Show({ comic, userHistory, isBookmarked = false }: ShowProps) {
+    const { auth } = usePage<PageProps>().props;
     const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false);
+    const [bookmarked, setBookmarked] = useState(isBookmarked);
+    const [isBookmarking, setIsBookmarking] = useState(false);
+
+    const handleToggleBookmark = () => {
+        if (!auth.user) {
+            router.visit('/login');
+            return;
+        }
+
+        setIsBookmarking(true);
+        router.post(
+            `/komik/${comic.slug}/bookmark`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setBookmarked(!bookmarked);
+                    setIsBookmarking(false);
+                },
+                onError: () => {
+                    setIsBookmarking(false);
+                },
+            }
+        );
+    };
 
     const cleanSynopsis = comic.synopsis?.trim() || 'Sinopsis belum tersedia untuk judul ini.';
     const isSynopsisLong = cleanSynopsis.length > 280;
@@ -130,18 +158,54 @@ export default function Show({ comic }: ShowProps) {
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center gap-3 mb-6">
-                                <a
-                                    href="#chapter-list"
-                                    className="inline-flex items-center justify-center px-6 py-3 font-display text-base tracking-wider uppercase bg-[#BAD306] hover:bg-[#E0FF00] text-[#111111] border-2 border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    Mulai Baca
-                                </a>
+                                {userHistory ? (
+                                    <Link
+                                        href={`/komik/${comic.slug}/${userHistory.chapter_key}`}
+                                        className="inline-flex items-center justify-center gap-2 px-6 py-3 font-display text-base tracking-wider uppercase bg-[#BAD306] hover:bg-[#E0FF00] text-[#111111] border-2 border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none shadow-sm"
+                                    >
+                                        <span>Lanjutkan Membaca</span>
+                                        <span className="px-1.5 py-0.5 bg-[#111111] text-[#BAD306] text-xs font-bold font-mono">
+                                            Ch. {userHistory.chapter_number}
+                                        </span>
+                                    </Link>
+                                ) : (comic.first_chapter?.chapter_key || comic.chapters.length > 0) ? (
+                                    <Link
+                                        href={`/komik/${comic.slug}/${comic.first_chapter?.chapter_key || comic.chapters[comic.chapters.length - 1].chapter_key}`}
+                                        className="inline-flex items-center justify-center px-6 py-3 font-display text-base tracking-wider uppercase bg-[#BAD306] hover:bg-[#E0FF00] text-[#111111] border-2 border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
+                                    >
+                                        Mulai Baca
+                                    </Link>
+                                ) : (
+                                    <a
+                                        href="#chapter-list"
+                                        className="inline-flex items-center justify-center px-6 py-3 font-display text-base tracking-wider uppercase bg-[#BAD306] hover:bg-[#E0FF00] text-[#111111] border-2 border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
+                                    >
+                                        Mulai Baca
+                                    </a>
+                                )}
                                 <button
                                     type="button"
-                                    onClick={() => alert('Fitur bookmark akun akan tersedia pada modul berikutnya.')}
-                                    className="inline-flex items-center justify-center px-6 py-3 font-display text-base tracking-wider uppercase bg-[#111111] hover:border-[#BAD306] hover:text-[#BAD306] text-[#F8F8F8] border border-[#444444] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
+                                    onClick={handleToggleBookmark}
+                                    disabled={isBookmarking}
+                                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 font-display text-base tracking-wider uppercase transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none border ${
+                                        bookmarked
+                                            ? 'bg-[#1C2405] text-[#BAD306] border-[#BAD306]'
+                                            : 'bg-[#111111] hover:border-[#BAD306] hover:text-[#BAD306] text-[#F8F8F8] border-[#444444]'
+                                    }`}
                                 >
-                                    Bookmark
+                                    <svg
+                                        className={`w-4 h-4 ${bookmarked ? 'fill-[#BAD306]' : 'fill-none'}`}
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                                        />
+                                    </svg>
+                                    <span>{bookmarked ? 'Tersimpan' : 'Bookmark'}</span>
                                 </button>
                             </div>
                         </div>
@@ -172,6 +236,7 @@ export default function Show({ comic }: ShowProps) {
             <ChapterList
                 comicSlug={comic.slug}
                 chapters={comic.chapters}
+                activeChapterKey={userHistory?.chapter_key}
             />
         </AppLayout>
     );
