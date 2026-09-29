@@ -16,6 +16,7 @@ readonly class ComicItem
         public ?string $latestChapter = null,
         public ?string $rating = null,
         public ?string $description = null,
+        public ?string $relativeTime = null,
     ) {}
 
     /**
@@ -33,6 +34,7 @@ readonly class ComicItem
             'latest_chapter' => $this->latestChapter,
             'rating' => $this->rating,
             'description' => $this->description,
+            'relative_time' => $this->relativeTime,
         ];
     }
 
@@ -51,6 +53,7 @@ readonly class ComicItem
             latestChapter: isset($data['latest_chapter']) ? (string) $data['latest_chapter'] : null,
             rating: isset($data['rating']) ? (string) $data['rating'] : null,
             description: isset($data['description']) ? (string) $data['description'] : null,
+            relativeTime: isset($data['relative_time']) ? (string) $data['relative_time'] : (isset($data['uploaded_at']) ? (string) $data['uploaded_at'] : null),
         );
     }
 }

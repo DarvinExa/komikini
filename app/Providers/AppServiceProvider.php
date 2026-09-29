@@ -94,6 +94,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinutes(60, 5)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('admin-mutation', function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
+        });
+
         // Register Policies
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);

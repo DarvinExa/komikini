@@ -84,6 +84,19 @@ class KomikuProviderContractTest extends TestCase
         $this->assertSame(ComicType::MANHUA, $result->items[0]->comicType);
     }
 
+    public function test_by_type_returns_comic_page(): void
+    {
+        $fixture = file_get_contents(base_path('tests/Fixtures/Komiku/terbaru.json'));
+        Http::fake([
+            "{$this->baseUrl}/type/manga*" => Http::response($fixture, 200),
+        ]);
+
+        $result = $this->provider->byType(ComicType::MANGA);
+
+        $this->assertInstanceOf(ComicPage::class, $result);
+        $this->assertCount(2, $result->items);
+    }
+
     public function test_genres_returns_genre_collection(): void
     {
         $fixture = file_get_contents(base_path('tests/Fixtures/Komiku/genre_all.json'));

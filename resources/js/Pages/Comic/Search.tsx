@@ -28,13 +28,19 @@ export default function Search({ query = '', comics }: SearchProps) {
         <AppLayout
             title={hasSearched ? `Hasil Pencarian: ${query}` : 'Pencarian Komik'}
             description="Cari judul manga, manhwa, dan manhua favoritmu dengan mudah dan cepat di Komikini."
+            noIndex={true}
         >
+            {/* Screen Reader Live Region for Search Results (WCAG 2.2 AA) */}
+            <div className="sr-only" role="status" aria-live="polite">
+                {hasSearched ? `Ditemukan ${items.length} komik untuk kata kunci "${query}".` : ''}
+            </div>
+
             {/* Search Header */}
             <div className="max-w-2xl mx-auto mb-10 text-center">
-                <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wider text-[#F8F8F8] mb-2">
+                <h1 className="font-display font-bold text-3xl sm:text-4xl uppercase tracking-wider text-[#f3f3ef] mb-2">
                     Cari Judul Komik
                 </h1>
-                <p className="text-sm text-[#AAAAAA] mb-6">
+                <p className="font-sans text-sm text-[#aaa9a3] mb-6">
                     Ketik judul komik, manga, manhwa, atau manhua yang ingin kamu temukan.
                 </p>
 
@@ -46,12 +52,12 @@ export default function Search({ query = '', comics }: SearchProps) {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Contoh: Solo Leveling, One Piece, Tower of God..."
                         maxLength={100}
-                        className="flex-1 bg-[#161616] text-sm text-[#F8F8F8] placeholder-[#777777] px-4 py-3 rounded-none border-2 border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
+                        className="flex-1 bg-[#151515] text-sm text-[#f3f3ef] placeholder-[#777771] px-4 py-3 rounded-none border border-[#484848] focus:border-[#bdd600] focus:outline-none transition-colors"
                         aria-label="Kata kunci pencarian"
                     />
                     <button
                         type="submit"
-                        className="px-6 py-3 font-display text-sm tracking-wider uppercase text-[#111111] bg-[#BAD306] hover:bg-[#E0FF00] border-2 border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none shrink-0"
+                        className="px-6 py-3 font-sans text-xs font-bold tracking-wider uppercase text-[#101010] bg-[#bdd600] hover:bg-[#d8ef21] border border-[#bdd600] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#bdd600] rounded-none shrink-0 cursor-pointer"
                     >
                         Cari
                     </button>
@@ -60,8 +66,8 @@ export default function Search({ query = '', comics }: SearchProps) {
 
             {/* Results or States */}
             {!hasSearched ? (
-                <div className="text-center py-12 bg-[#161616] border border-[#222222] max-w-lg mx-auto p-6 rounded-none">
-                    <p className="text-sm text-[#AAAAAA]">
+                <div className="text-center py-12 bg-[#191919] border border-[#303030] max-w-lg mx-auto p-6 rounded-none">
+                    <p className="font-sans text-sm text-[#aaa9a3]">
                         Mulai ketik di kolom pencarian di atas untuk menemukan ribuan judul komik menarik.
                     </p>
                 </div>
@@ -74,9 +80,9 @@ export default function Search({ query = '', comics }: SearchProps) {
                 />
             ) : (
                 <section aria-labelledby="search-results-heading">
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#222222]">
-                        <h2 id="search-results-heading" className="font-display text-xl uppercase tracking-wider text-[#F8F8F8]">
-                            Hasil Pencarian: <span className="text-[#BAD306]">"{query}"</span>
+                    <div className="flex items-center justify-between mb-6 pb-3 border-b border-[#303030]">
+                        <h2 id="search-results-heading" className="font-display font-bold text-2xl uppercase tracking-wider text-[#f3f3ef]">
+                            Hasil Pencarian: <span className="text-[#bdd600]">"{query}"</span>
                         </h2>
                     </div>
 

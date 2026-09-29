@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ComicProviderInterface;
 use App\Exceptions\ComicProvider\ComicProviderException;
+use App\Services\Comic\ComicEnricher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -49,7 +50,7 @@ class SearchController extends Controller
 
             return Inertia::render('Comic/Search', [
                 'query' => $query,
-                'comics' => $comicPage->toArray(),
+                'comics' => ComicEnricher::enrichPage($comicPage->toArray()),
             ]);
         } catch (ComicProviderException $e) {
             Log::error("Gagal melakukan pencarian komik untuk query '{$query}': {$e->getMessage()}", $e->context());

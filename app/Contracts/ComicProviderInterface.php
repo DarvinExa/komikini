@@ -29,6 +29,11 @@ interface ComicProviderInterface
     public function popular(?ComicType $type = null): ComicCollection;
 
     /**
+     * Retrieve comics by type (manga, manhwa, manhua) with pagination.
+     */
+    public function byType(ComicType $type, int $page = 1): ComicPage;
+
+    /**
      * Search comics by title/keyword.
      */
     public function search(string $query, int $page = 1): ComicPage;

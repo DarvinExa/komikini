@@ -85,6 +85,14 @@ class Comic extends Model
     }
 
     /**
+     * Get the rankings for the comic.
+     */
+    public function rankings(): HasMany
+    {
+        return $this->hasMany(ComicRanking::class);
+    }
+
+    /**
      * Upsert minimum metadata from ComicDetail DTO into local database.
      */
     public static function upsertFromDetail(ComicDetail $detail): self

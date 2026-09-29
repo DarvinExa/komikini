@@ -73,6 +73,7 @@ class DiscoveryFeatureTest extends TestCase
         $populer = file_get_contents(base_path('tests/Fixtures/Komiku/populer.json'));
 
         Http::fake([
+            "{$this->baseUrl}/type/manhwa*" => Http::response($populer, 200),
             "{$this->baseUrl}/komik-populer/manhwa" => Http::response($populer, 200),
         ]);
 

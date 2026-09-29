@@ -65,19 +65,29 @@ class ImageUrlValidator
             return false;
         }
 
-        // 2. Reject non-standard ports
+        // 2. Reject URLs with embedded credentials (userinfo) to prevent URL confusion
+        if (isset($parts['user']) || isset($parts['pass'])) {
+            return false;
+        }
+
+        // 3. Reject non-standard ports
         if (isset($parts['port']) && $parts['port'] !== 443) {
             return false;
         }
 
         $host = strtolower($parts['host']);
 
-        // 3. Block loopback, private, and reserved IP ranges (Anti-SSRF)
+        // 4. Reject suspicious characters in host
+        if (str_contains($host, '@') || str_contains($host, '%') || str_contains($host, '\\')) {
+            return false;
+        }
+
+        // 5. Block loopback, private, and reserved IP ranges (Anti-SSRF)
         if ($this->isBlockedIpOrHost($host)) {
             return false;
         }
 
-        // 4. Validate host against configured allowlist
+        // 6. Validate host against configured allowlist
         return $this->isHostAllowed($host);
     }
 
@@ -86,20 +96,32 @@ class ImageUrlValidator
      */
     protected function isBlockedIpOrHost(string $host): bool
     {
+        $cleanHost = trim($host, '[]');
+
+        // Block numeric / octal / hex encoded IP addresses
+        if (is_numeric($cleanHost)) {
+            return true;
+        }
+
         // Check for direct IP address
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
+        if (filter_var($cleanHost, FILTER_VALIDATE_IP)) {
             // FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-            if (! filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            if (! filter_var($cleanHost, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
                 return true;
             }
 
-            if ($host === '127.0.0.1' || $host === '::1' || $host === '169.254.169.254') {
+            if ($cleanHost === '127.0.0.1' || $cleanHost === '::1' || $cleanHost === '169.254.169.254') {
                 return true;
             }
         }
 
-        // Block localhost and standard loopback hostnames
-        if ($host === 'localhost' || str_ends_with($host, '.localhost') || str_ends_with($host, '.local') || str_ends_with($host, '.internal')) {
+        // Block localhost and standard internal hostnames
+        if ($host === 'localhost' || str_ends_with($host, '.localhost') || str_ends_with($host, '.local') || str_ends_with($host, '.internal') || str_ends_with($host, '.lan')) {
+            return true;
+        }
+
+        // Block cloud metadata hostnames
+        if (str_contains($host, 'metadata.google.internal') || str_contains($host, '169.254.169.254')) {
             return true;
         }
 

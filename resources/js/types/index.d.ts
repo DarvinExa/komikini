@@ -6,6 +6,9 @@ export interface User {
     email: string;
     email_verified_at: string | null;
     status: string;
+    roles?: string[];
+    permissions?: string[];
+    can_access_admin?: boolean;
 }
 
 export type ComicType = 'manga' | 'manhwa' | 'manhua' | 'unknown';
@@ -18,6 +21,7 @@ export interface ComicItem {
     latest_chapter: string | null;
     rating: string | null;
     description: string | null;
+    relative_time?: string | null;
 }
 
 export interface ComicPage {

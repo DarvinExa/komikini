@@ -1,22 +1,32 @@
-import React, { ReactNode, useState } from 'react';
-import { Head, Link, usePage } from '@inertiajs/react';
+import React, { ReactNode, useState, useEffect } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { SearchBox } from '@/Components/SearchBox';
+import { SeoHead, SeoHeadProps } from '@/Components/SeoHead';
 
-interface AppLayoutProps {
-    title?: string;
-    description?: string;
+interface AppLayoutProps extends SeoHeadProps {
     children: ReactNode;
 }
 
-export default function AppLayout({ title, description, children }: AppLayoutProps) {
+export default function AppLayout({
+    title,
+    description,
+    canonical,
+    ogImage,
+    ogType,
+    noIndex,
+    jsonLd,
+    children,
+}: AppLayoutProps) {
     const { appName, auth, correlationId } = usePage<PageProps>().props;
+    const { url } = usePage();
     const user = auth.user;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navLinks = [
         { href: '/', label: 'Beranda' },
         { href: '/terbaru', label: 'Terbaru' },
+        { href: '/ranking', label: 'Peringkat' },
         { href: '/type/manga', label: 'Manga' },
         { href: '/type/manhwa', label: 'Manhwa' },
         { href: '/type/manhua', label: 'Manhua' },
@@ -24,152 +34,215 @@ export default function AppLayout({ title, description, children }: AppLayoutPro
         { href: '/pustaka', label: 'Pustaka' },
     ];
 
-    return (
-        <div className="min-h-screen flex flex-col bg-[#1A1A1A] text-[#F8F8F8] font-sans antialiased overflow-x-hidden w-full max-w-full selection:bg-[#BAD306] selection:text-[#111111]">
-            <Head>
-                <title>{title ? `${title} - ${appName}` : appName}</title>
-                {description && <meta name="description" content={description} />}
-            </Head>
+    // Lock body scroll and register Escape listener when drawer is open
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && mobileMenuOpen) {
+                setMobileMenuOpen(false);
+            }
+        };
 
-            {/* Sticky Header with 2px bottom border */}
-            <header className="sticky top-0 z-40 border-b-2 border-[#222222] bg-[#111111] w-full max-w-full">
-                <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
-                    {/* Brand / Logo */}
-                    <div className="flex items-center gap-6 shrink-0">
+        if (mobileMenuOpen) {
+            document.body.classList.add('overflow-hidden');
+            window.addEventListener('keydown', handleKeyDown);
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        return () => {
+            document.body.classList.remove('overflow-hidden');
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [mobileMenuOpen]);
+
+    return (
+        <div className="min-h-screen flex flex-col bg-[#121212] text-[#f3f3ef] font-sans antialiased overflow-x-hidden w-full max-w-full selection:bg-[#bdd600] selection:text-[#101010]">
+            <SeoHead
+                title={title}
+                description={description}
+                canonical={canonical}
+                ogImage={ogImage}
+                ogType={ogType}
+                noIndex={noIndex}
+                jsonLd={jsonLd}
+            />
+
+            {/* Accessible Skip to Content Link (WCAG 2.2 AA) */}
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-[#bdd600] focus:text-[#101010] focus:font-display focus:text-sm focus:font-bold focus:outline-none focus:ring-2 focus:ring-[#101010] rounded-none shadow-lg"
+            >
+                Lewati ke konten utama
+            </a>
+
+            {/* Sticky Header */}
+            <header className="sticky top-0 z-40 bg-[#0d0d0d] border-b border-[#303030] w-full max-w-full">
+                <div className="w-[min(1280px,calc(100%-40px))] max-sm:w-[calc(100%-24px)] mx-auto">
+                    <div className="h-[68px] max-sm:h-auto max-sm:py-3 grid grid-cols-[auto_minmax(240px,610px)_1fr_auto] max-lg:grid-cols-[auto_1fr_auto] max-sm:grid-cols-[1fr_auto] gap-5 max-sm:gap-2.5 items-center">
+                        {/* Brand / Logo */}
                         <Link
                             href="/"
-                            className="flex items-center gap-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306]"
+                            className="inline-flex items-center font-display font-bold text-[22px] max-sm:text-lg tracking-wider text-[#f3f3ef] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#bdd600]"
                         >
-                            <span className="font-display text-2xl sm:text-3xl tracking-wider text-[#F8F8F8] uppercase">
-                                {appName}
-                            </span>
-                            <span className="font-display text-[10px] tracking-widest text-[#111111] bg-[#BAD306] px-1 py-0.5 uppercase">
-                                ID
+                            <span>KOMIKINI</span>
+                            <span className="inline-grid place-items-center w-[25px] h-[25px] max-sm:w-[22px] max-sm:h-[22px] ml-2 bg-[#bdd600] text-[#101010] font-sans font-bold text-sm max-sm:text-xs">
+                                K
                             </span>
                         </Link>
 
-                        {/* Desktop Navigation Links */}
-                        <nav className="hidden lg:flex items-center space-x-1" aria-label="Navigasi Utama">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className="px-3 py-1 font-display text-sm tracking-wider uppercase text-[#AAAAAA] hover:text-[#F8F8F8] hover:bg-[#161616] border border-transparent hover:border-[#444444] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
+                        {/* Search Desktop / Tablet */}
+                        <div className="max-sm:hidden w-full">
+                            <SearchBox id="search-desktop" placeholder="Cari judul, manga, manhwa, atau manhua" />
+                        </div>
+
+                        {/* Desktop Account Section */}
+                        <nav className="account hidden lg:flex justify-end items-center gap-4 text-xs font-bold uppercase tracking-wider" aria-label="Akses Akun">
+                            {user ? (
+                                <div className="flex items-center gap-3">
+                                    {user.can_access_admin && (
+                                        <Link
+                                            href="/admin"
+                                            className="bg-[#bdd600] text-[#101010] px-3 py-2 font-bold hover:bg-[#d8ef21] transition-colors"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
+                                    <Link
+                                        href="/pustaka"
+                                        className="text-[#f3f3ef] hover:text-[#bdd600] transition-colors"
+                                    >
+                                        Pustaka
+                                    </Link>
+                                    <Link
+                                        href="/profile"
+                                        className="text-[#f3f3ef] hover:text-[#bdd600] transition-colors"
+                                    >
+                                        <span className="text-[#aaa9a3]">Akun: </span>
+                                        <span>{user.name}</span>
+                                    </Link>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="text-[#aaa9a3] hover:text-[#e56458] transition-colors cursor-pointer"
+                                    >
+                                        Keluar
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-4">
+                                    <Link
+                                        href="/login"
+                                        className="text-[#f3f3ef] hover:text-[#bdd600] transition-colors py-2"
+                                    >
+                                        Masuk
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        className="bg-[#bdd600] text-[#101010] px-4 py-2 font-bold hover:bg-[#d8ef21] transition-colors"
+                                    >
+                                        Daftar
+                                    </Link>
+                                </div>
+                            )}
                         </nav>
-                    </div>
 
-                    {/* Desktop Search in Center */}
-                    <div className="hidden sm:block flex-1 max-w-sm md:max-w-md mx-2">
-                        <SearchBox />
-                    </div>
-
-                    {/* Right User Actions */}
-                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        {user ? (
-                            <div className="hidden sm:flex items-center gap-2 sm:gap-3">
-                                <Link
-                                    href="/pustaka"
-                                    className="font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#333333] hover:border-[#BAD306] hover:text-[#BAD306] px-2.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    Pustaka
-                                </Link>
-                                <Link
-                                    href="/profile"
-                                    className="font-display text-xs tracking-wider uppercase text-[#F8F8F8] hover:text-[#BAD306] px-2 py-1.5 border border-transparent hover:border-[#444444] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    <span className="hidden xl:inline text-[#AAAAAA]">Akun: </span>
-                                    <span>{user.name}</span>
-                                </Link>
-                                <Link
-                                    href="/logout"
-                                    method="post"
-                                    as="button"
-                                    className="font-display text-xs tracking-wider uppercase text-[#E56458] hover:text-white hover:bg-[#E56458] border border-[#E56458] px-2.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E56458] rounded-none"
-                                >
-                                    Keluar
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="hidden sm:flex items-center gap-2">
-                                <Link
-                                    href="/login"
-                                    className="font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#444444] hover:border-[#BAD306] hover:text-[#BAD306] px-3 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    Masuk
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] hover:bg-[#E0FF00] border-2 border-[#BAD306] px-3.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                                >
-                                    Daftar
-                                </Link>
-                            </div>
-                        )}
-
-                        {/* Mobile Menu Toggle Button */}
+                        {/* Hamburger Button */}
                         <button
                             type="button"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="lg:hidden p-2 text-[#AAAAAA] hover:text-[#F8F8F8] border border-[#444444] bg-[#161616] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none"
-                            aria-expanded={mobileMenuOpen}
+                            id="menuOpen"
+                            onClick={() => setMobileMenuOpen(true)}
+                            className="w-[42px] h-[40px] border border-[#484848] bg-[#151515] flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-[#bdd600] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#bdd600] max-sm:col-start-2 max-sm:row-start-1"
                             aria-label="Buka menu navigasi"
+                            aria-expanded={mobileMenuOpen}
+                            aria-controls="menuPanel"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {mobileMenuOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                                )}
-                            </svg>
+                            <span className="block w-[18px] h-[2px] bg-[#f3f3ef]"></span>
+                            <span className="block w-[18px] h-[2px] bg-[#f3f3ef]"></span>
+                            <span className="block w-[18px] h-[2px] bg-[#f3f3ef]"></span>
                         </button>
+
+                        {/* Mobile Search Row */}
+                        <div className="sm:hidden col-span-2 row-start-2 w-full mt-1">
+                            <SearchBox id="search-mobile" placeholder="Cari judul, manga, manhwa, atau manhua" />
+                        </div>
                     </div>
                 </div>
+            </header>
 
-                {/* Mobile Drawer */}
-                {mobileMenuOpen && (
-                    <div className="lg:hidden border-t-2 border-[#222222] bg-[#111111] px-4 pt-3 pb-5 space-y-3">
-                        <div className="sm:hidden mb-3">
-                            <SearchBox />
+            {/* Slide-over Hamburger Drawer Modal */}
+            <div
+                id="menuPanel"
+                className={`fixed inset-0 z-50 transition-opacity ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                aria-hidden={!mobileMenuOpen}
+            >
+                {/* Backdrop shade */}
+                <div
+                    id="menuShade"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="absolute inset-0 bg-black/75 transition-opacity"
+                    aria-label="Tutup menu modal"
+                />
+
+                {/* Drawer Panel */}
+                <aside
+                    id="menuDrawer"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Menu utama"
+                    className={`absolute top-0 right-0 w-[min(390px,100%)] h-full bg-[#0d0d0d] border-l border-[#484848] p-6 flex flex-col justify-between overflow-y-auto transform transition-transform duration-200 ease-in-out ${
+                        mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+                    }`}
+                >
+                    <div>
+                        {/* Top bar with close button */}
+                        <div className="flex items-center justify-between pb-5 border-b border-[#303030]">
+                            <strong className="font-display text-xl font-bold text-[#f3f3ef] uppercase tracking-wider">
+                                Menu
+                            </strong>
+                            <button
+                                type="button"
+                                id="menuClose"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="w-10 h-10 flex items-center justify-center border border-[#484848] text-[#f3f3ef] hover:border-[#bdd600] hover:text-[#bdd600] text-2xl transition-colors cursor-pointer"
+                                aria-label="Tutup menu"
+                            >
+                                &times;
+                            </button>
                         </div>
-                        <nav className="grid grid-cols-2 gap-2" aria-label="Menu Mobile">
+
+                        {/* Navigation Links */}
+                        <nav className="flex flex-col mt-4" aria-label="Navigasi Menu">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="px-3 py-2 font-display text-sm tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#333333] hover:border-[#BAD306] hover:text-[#BAD306] transition-colors rounded-none"
+                                    className="py-3.5 border-b border-[#303030] font-sans text-base font-semibold text-[#f3f3ef] hover:text-[#bdd600] transition-colors"
                                 >
                                     {link.label}
                                 </Link>
                             ))}
                         </nav>
-                        {!user ? (
-                            <div className="sm:hidden flex items-center gap-2 pt-2 border-t border-[#222222]">
-                                <Link
-                                    href="/login"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 text-center py-2 font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#444444]"
-                                >
-                                    Masuk
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 text-center py-2 font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] border-2 border-[#BAD306]"
-                                >
-                                    Daftar
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="sm:hidden flex items-center gap-2 pt-2 border-t border-[#222222]">
+                    </div>
+
+                    {/* Footer Actions in Drawer */}
+                    <div className="pt-6 border-t border-[#303030] mt-6">
+                        {user ? (
+                            <div className="flex flex-col gap-3">
+                                {user.can_access_admin && (
+                                    <Link
+                                        href="/admin"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="w-full text-center py-2.5 font-display text-xs tracking-wider uppercase text-[#101010] bg-[#bdd600] font-bold"
+                                    >
+                                        Konsol Admin
+                                    </Link>
+                                )}
                                 <Link
                                     href="/profile"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 text-center py-2 font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#444444]"
+                                    className="w-full text-center py-2.5 font-display text-xs tracking-wider uppercase text-[#f3f3ef] bg-[#191919] border border-[#484848]"
                                 >
                                     Akun: {user.name}
                                 </Link>
@@ -178,30 +251,86 @@ export default function AppLayout({ title, description, children }: AppLayoutPro
                                     method="post"
                                     as="button"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 text-center py-2 font-display text-xs tracking-wider uppercase text-[#E56458] border border-[#E56458]"
+                                    className="w-full text-center py-2.5 font-display text-xs tracking-wider uppercase text-[#e56458] border border-[#e56458] hover:bg-[#e56458] hover:text-white transition-colors"
                                 >
                                     Keluar
                                 </Link>
                             </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Link
+                                    href="/login"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="flex-1 text-center py-2.5 font-display text-xs tracking-wider uppercase text-[#f3f3ef] bg-[#191919] border border-[#484848] hover:border-[#bdd600]"
+                                >
+                                    Masuk
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="flex-1 text-center py-2.5 font-display text-xs tracking-wider uppercase text-[#101010] bg-[#bdd600] font-bold hover:bg-[#d8ef21]"
+                                >
+                                    Daftar
+                                </Link>
+                            </div>
                         )}
                     </div>
-                )}
-            </header>
+                </aside>
+            </div>
 
             {/* Main Content Area */}
-            <main id="main-content" className="flex-1 w-full max-w-[1440px] min-w-0 mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <main id="main-content" className="flex-1 w-[min(1280px,calc(100%-40px))] max-sm:w-[calc(100%-24px)] mx-auto pt-[31px] max-sm:pt-[22px] pb-[110px] max-sm:pb-[92px]">
                 {children}
             </main>
 
+            {/* Mobile Bottom Navigation */}
+            <nav
+                className="sm:hidden fixed bottom-0 left-0 right-0 z-30 h-[66px] bg-[#0d0d0d] border-t border-[#484848] grid grid-cols-4 items-center"
+                aria-label="Navigasi cepat mobile"
+            >
+                <Link
+                    href="/"
+                    className={`flex flex-col items-center justify-center gap-1 font-sans text-[11px] font-bold uppercase ${
+                        url === '/' ? 'text-[#bdd600]' : 'text-[#aaa9a3] hover:text-[#f3f3ef]'
+                    }`}
+                >
+                    <span>Home</span>
+                </Link>
+                <Link
+                    href="/pustaka?tab=bookmark"
+                    className={`flex flex-col items-center justify-center gap-1 font-sans text-[11px] font-bold uppercase ${
+                        url.includes('bookmark') ? 'text-[#bdd600]' : 'text-[#aaa9a3] hover:text-[#f3f3ef]'
+                    }`}
+                >
+                    <span>Bookmark</span>
+                </Link>
+                <Link
+                    href="/pustaka"
+                    className={`flex flex-col items-center justify-center gap-1 font-sans text-[11px] font-bold uppercase ${
+                        url === '/pustaka' ? 'text-[#bdd600]' : 'text-[#aaa9a3] hover:text-[#f3f3ef]'
+                    }`}
+                >
+                    <span>History</span>
+                </Link>
+                <Link
+                    href={user ? '/profile' : '/login'}
+                    className={`flex flex-col items-center justify-center gap-1 font-sans text-[11px] font-bold uppercase ${
+                        url.includes('/profile') || url.includes('/login') ? 'text-[#bdd600]' : 'text-[#aaa9a3] hover:text-[#f3f3ef]'
+                    }`}
+                >
+                    <span>Profil</span>
+                </Link>
+            </nav>
+
             {/* Footer */}
-            <footer className="border-t-2 border-[#222222] bg-[#111111] py-8 text-xs text-[#AAAAAA]">
-                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <footer className="border-t border-[#303030] bg-[#0d0d0d] py-8 text-xs text-[#aaa9a3] max-sm:pb-24">
+                <div className="w-[min(1280px,calc(100%-40px))] max-sm:w-[calc(100%-24px)] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-center sm:text-left">
-                        <span className="font-display text-lg tracking-wider text-[#F8F8F8] uppercase">{appName}</span>
-                        <span className="text-xs text-[#AAAAAA]">Platform Baca Manga, Manhwa, dan Manhua Bahasa Indonesia.</span>
+                        <span className="font-display text-lg tracking-wider text-[#f3f3ef] uppercase">{appName}</span>
+                        <span className="text-xs text-[#aaa9a3]">Platform Baca Manga, Manhwa, dan Manhua Bahasa Indonesia.</span>
                     </div>
                     {correlationId && (
-                        <p className="font-mono text-[10px] text-[#777777]">
+                        <p className="font-mono text-[10px] text-[#777771]">
                             ID: {correlationId}
                         </p>
                     )}

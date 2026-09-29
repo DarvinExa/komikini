@@ -314,6 +314,13 @@ class CommentController extends Controller
 
         Gate::forUser($user)->authorize('create', CommentReport::class);
 
+        // Prevent users from reporting their own comments
+        if ($comment->user_id === $user->id) {
+            return response()->json([
+                'message' => 'Anda tidak dapat melaporkan komentar Anda sendiri.',
+            ], 403);
+        }
+
         $validated = $request->validate([
             'reason_code' => ['required', 'string', 'in:spam,harassment,spoiler,inappropriate,other'],
             'details' => ['nullable', 'string', 'max:500'],

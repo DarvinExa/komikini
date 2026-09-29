@@ -50,64 +50,65 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
     };
 
     return (
-        <AppLayout title="Profil Akun">
-            <div className="max-w-4xl mx-auto space-y-6">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+        <AppLayout title="Profil Akun" noIndex={true}>
+            <div className="max-w-3xl mx-auto space-y-8">
+                <div className="pb-4 border-b-2 border-[#222222]">
+                    <h1 className="font-display text-3xl uppercase tracking-wider text-[#F8F8F8]">
                         Pengaturan Akun & Keamanan
                     </h1>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[#AAAAAA] mt-1">
                         Kelola data profil, kata sandi, dan sesi aktif perangkat Anda.
                     </p>
                 </div>
 
                 {status === 'profile-updated' && (
-                    <div className="p-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-medium">
-                        Profil berhasil diperbarui.
+                    <div className="p-3 bg-[#BAD306]/10 border border-[#BAD306] text-[#BAD306] text-xs font-mono" role="status" aria-live="polite">
+                        [OK] Profil berhasil diperbarui.
                     </div>
                 )}
 
                 {status === 'password-updated' && (
-                    <div className="p-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-medium">
-                        Kata sandi berhasil diperbarui.
+                    <div className="p-3 bg-[#BAD306]/10 border border-[#BAD306] text-[#BAD306] text-xs font-mono" role="status" aria-live="polite">
+                        [OK] Kata sandi berhasil diperbarui.
                     </div>
                 )}
 
                 {status === 'other-sessions-logged-out' && (
-                    <div className="p-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-medium">
-                        Sesi pada perangkat lain berhasil dikeluarkan.
+                    <div className="p-3 bg-[#BAD306]/10 border border-[#BAD306] text-[#BAD306] text-xs font-mono" role="status" aria-live="polite">
+                        [OK] Sesi pada perangkat lain berhasil dikeluarkan.
                     </div>
                 )}
 
                 {/* Section 1: Data Profil */}
-                <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-xs">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                <div className="p-6 bg-[#161616] border-2 border-[#222222] rounded-none">
+                    <h2 className="font-display text-xl uppercase tracking-wide text-[#F8F8F8] mb-1">
                         Informasi Profil
                     </h2>
-                    <p className="text-xs text-gray-500 mb-6">
+                    <p className="text-xs text-[#AAAAAA] mb-6">
                         Perbarui nama, username, dan alamat email akun Anda.
                     </p>
 
                     <form onSubmit={updateProfile} className="space-y-4 max-w-xl">
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                Nama
+                            <label htmlFor="name" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
+                                Nama Lengkap
                             </label>
                             <input
                                 id="name"
                                 type="text"
                                 value={profileForm.data.name}
                                 onChange={(e) => profileForm.setData('name', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={profileForm.errors.name ? 'name-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 required
                             />
                             {profileForm.errors.name && (
-                                <p className="mt-1 text-xs text-rose-600">{profileForm.errors.name}</p>
+                                <p id="name-error" className="mt-1 text-xs text-[#E56458] font-mono">{profileForm.errors.name}</p>
                             )}
                         </div>
 
                         <div>
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="username" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
                                 Username
                             </label>
                             <input
@@ -115,40 +116,42 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                                 type="text"
                                 value={profileForm.data.username}
                                 onChange={(e) => profileForm.setData('username', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={profileForm.errors.username ? 'username-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                             />
                             {profileForm.errors.username && (
-                                <p className="mt-1 text-xs text-rose-600">{profileForm.errors.username}</p>
+                                <p id="username-error" className="mt-1 text-xs text-[#E56458] font-mono">{profileForm.errors.username}</p>
                             )}
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email
+                            <label htmlFor="email" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
+                                Alamat Email
                             </label>
                             <input
                                 id="email"
                                 type="email"
                                 value={profileForm.data.email}
                                 onChange={(e) => profileForm.setData('email', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={profileForm.errors.email ? 'email-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 required
                             />
                             {profileForm.errors.email && (
-                                <p className="mt-1 text-xs text-rose-600">{profileForm.errors.email}</p>
+                                <p id="email-error" className="mt-1 text-xs text-[#E56458] font-mono">{profileForm.errors.email}</p>
                             )}
                         </div>
 
                         {mustVerifyEmail && user?.email_verified_at === null && (
-                            <div className="p-3 rounded-lg bg-amber-50 text-amber-800 text-xs">
+                            <div className="p-3 bg-[#111111] border border-[#444444] text-xs text-[#AAAAAA]">
                                 Alamat email Anda belum diverifikasi.{' '}
                                 <Link
                                     href="/email/verification-notification"
                                     method="post"
                                     as="button"
-                                    className="font-medium underline hover:text-amber-900"
+                                    className="font-bold text-[#BAD306] hover:underline"
                                 >
-                                    Klik di sini untuk mengirim ulang email verifikasi.
+                                    Kirim ulang email verifikasi.
                                 </Link>
                             </div>
                         )}
@@ -156,7 +159,7 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                         <button
                             type="submit"
                             disabled={profileForm.processing}
-                            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="px-5 py-2.5 min-h-[44px] font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] hover:bg-[#E0FF00] border-2 border-[#BAD306] font-bold rounded-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] disabled:opacity-50"
                         >
                             {profileForm.processing ? 'Menyimpan...' : 'Simpan Profil'}
                         </button>
@@ -164,17 +167,17 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                 </div>
 
                 {/* Section 2: Update Password */}
-                <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-xs">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                <div className="p-6 bg-[#161616] border-2 border-[#222222] rounded-none">
+                    <h2 className="font-display text-xl uppercase tracking-wide text-[#F8F8F8] mb-1">
                         Perbarui Kata Sandi
                     </h2>
-                    <p className="text-xs text-gray-500 mb-6">
+                    <p className="text-xs text-[#AAAAAA] mb-6">
                         Pastikan akun Anda menggunakan kata sandi yang panjang dan acak demi keamanan.
                     </p>
 
                     <form onSubmit={updatePassword} className="space-y-4 max-w-xl">
                         <div>
-                            <label htmlFor="current_password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="current_password" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
                                 Kata Sandi Saat Ini
                             </label>
                             <input
@@ -183,16 +186,17 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                                 value={passwordForm.data.current_password}
                                 autoComplete="current-password"
                                 onChange={(e) => passwordForm.setData('current_password', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={passwordForm.errors.current_password ? 'current-password-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 required
                             />
                             {passwordForm.errors.current_password && (
-                                <p className="mt-1 text-xs text-rose-600">{passwordForm.errors.current_password}</p>
+                                <p id="current-password-error" className="mt-1 text-xs text-[#E56458] font-mono">{passwordForm.errors.current_password}</p>
                             )}
                         </div>
 
                         <div>
-                            <label htmlFor="new_password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="new_password" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
                                 Kata Sandi Baru
                             </label>
                             <input
@@ -201,16 +205,17 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                                 value={passwordForm.data.password}
                                 autoComplete="new-password"
                                 onChange={(e) => passwordForm.setData('password', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={passwordForm.errors.password ? 'new-password-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 required
                             />
                             {passwordForm.errors.password && (
-                                <p className="mt-1 text-xs text-rose-600">{passwordForm.errors.password}</p>
+                                <p id="new-password-error" className="mt-1 text-xs text-[#E56458] font-mono">{passwordForm.errors.password}</p>
                             )}
                         </div>
 
                         <div>
-                            <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="confirm_password" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
                                 Konfirmasi Kata Sandi Baru
                             </label>
                             <input
@@ -219,18 +224,19 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                                 value={passwordForm.data.password_confirmation}
                                 autoComplete="new-password"
                                 onChange={(e) => passwordForm.setData('password_confirmation', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={passwordForm.errors.password_confirmation ? 'confirm-password-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 required
                             />
                             {passwordForm.errors.password_confirmation && (
-                                <p className="mt-1 text-xs text-rose-600">{passwordForm.errors.password_confirmation}</p>
+                                <p id="confirm-password-error" className="mt-1 text-xs text-[#E56458] font-mono">{passwordForm.errors.password_confirmation}</p>
                             )}
                         </div>
 
                         <button
                             type="submit"
                             disabled={passwordForm.processing}
-                            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="px-5 py-2.5 min-h-[44px] font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] hover:bg-[#E0FF00] border-2 border-[#BAD306] font-bold rounded-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] disabled:opacity-50"
                         >
                             {passwordForm.processing ? 'Menyimpan...' : 'Ganti Kata Sandi'}
                         </button>
@@ -238,17 +244,17 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                 </div>
 
                 {/* Section 3: Logout Other Sessions */}
-                <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-xs">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                <div className="p-6 bg-[#161616] border-2 border-[#222222] rounded-none">
+                    <h2 className="font-display text-xl uppercase tracking-wide text-[#F8F8F8] mb-1">
                         Sesi Perangkat Lain
                     </h2>
-                    <p className="text-xs text-gray-500 mb-6">
+                    <p className="text-xs text-[#AAAAAA] mb-6">
                         Keluarkan akun Anda dari semua sesi browser dan perangkat lain jika mencurigai adanya akses tidak sah.
                     </p>
 
                     <form onSubmit={logoutOtherSessions} className="space-y-4 max-w-xl">
                         <div>
-                            <label htmlFor="session_password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="session_password" className="block text-xs font-display tracking-wider uppercase text-[#AAAAAA] mb-1">
                                 Konfirmasi Kata Sandi Anda
                             </label>
                             <input
@@ -256,19 +262,20 @@ export default function Edit({ mustVerifyEmail, status }: EditProfileProps) {
                                 type="password"
                                 value={otherSessionsForm.data.password}
                                 onChange={(e) => otherSessionsForm.setData('password', e.target.value)}
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                                aria-describedby={otherSessionsForm.errors.password ? 'session-password-error' : undefined}
+                                className="w-full bg-[#111111] text-sm text-[#F8F8F8] px-3.5 py-2.5 rounded-none border border-[#444444] focus:border-[#BAD306] focus:outline-none transition-colors"
                                 placeholder="Masukkan kata sandi saat ini"
                                 required
                             />
                             {otherSessionsForm.errors.password && (
-                                <p className="mt-1 text-xs text-rose-600">{otherSessionsForm.errors.password}</p>
+                                <p id="session-password-error" className="mt-1 text-xs text-[#E56458] font-mono">{otherSessionsForm.errors.password}</p>
                             )}
                         </div>
 
                         <button
                             type="submit"
                             disabled={otherSessionsForm.processing}
-                            className="rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="px-5 py-2.5 min-h-[44px] font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] hover:bg-[#E56458] border border-[#E56458] font-bold rounded-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E56458] disabled:opacity-50"
                         >
                             {otherSessionsForm.processing ? 'Memproses...' : 'Keluarkan dari Perangkat Lain'}
                         </button>

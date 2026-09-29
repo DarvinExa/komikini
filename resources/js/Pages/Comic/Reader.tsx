@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { ChapterPayload, PageProps } from '@/types';
 import CommentSection from '@/Components/CommentSection';
+import { SeoHead } from '@/Components/SeoHead';
 
 interface ReaderProps {
     comic: {
@@ -147,15 +148,26 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
         return `${url}${separator}retry=${count}`;
     };
 
+    const chapterJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Chapter',
+        name: chapter.title || `Chapter ${chapter.chapter_number}`,
+        isPartOf: {
+            '@type': 'ComicSeries',
+            name: comic.title,
+        },
+        inLanguage: 'id',
+    };
+
     return (
         <div className="min-h-screen bg-[#0A0A0A] text-[#F8F8F8] font-sans antialiased selection:bg-[#BAD306] selection:text-[#111111] overflow-x-hidden w-full max-w-full">
-            <Head>
-                <title>{`${comic.title} - Chapter ${chapter.chapter_number} - Komikini`}</title>
-                <meta
-                    name="description"
-                    content={`Baca komik ${comic.title} Chapter ${chapter.chapter_number} Bahasa Indonesia secara online di Komikini.`}
-                />
-            </Head>
+            <SeoHead
+                title={`${comic.title} Chapter ${chapter.chapter_number} Bahasa Indonesia`}
+                description={`Baca komik ${comic.title} Chapter ${chapter.chapter_number} Bahasa Indonesia secara online di Komikini.`}
+                canonical={`/komik/${comic.slug}/${chapter.chapter_key}`}
+                ogType="article"
+                jsonLd={chapterJsonLd}
+            />
 
             {/* Reading Scroll Progress Bar at very top */}
             <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-[#222222]">
@@ -279,7 +291,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                         imageRefs.current[index] = el;
                                     }}
                                     data-page-index={pageNumber}
-                                    className="w-full relative min-h-[300px] flex items-center justify-center bg-[#0d0d0d] overflow-hidden"
+                                    className="w-full relative min-h-[400px] flex items-center justify-center bg-[#0d0d0d] overflow-hidden"
                                 >
                                     {isFailed ? (
                                         <div className="w-full py-16 px-4 bg-[#161616] border-2 border-[#444444] text-center my-2 rounded-none">
@@ -305,9 +317,11 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                     ) : (
                                         <img
                                             src={getImageSrc(imgUrl, index)}
-                                            alt={`Halaman ${pageNumber} - ${comic.title} Chapter ${chapter.chapter_number}`}
-                                            loading="lazy"
+                                            alt={`Halaman ${pageNumber}`}
+                                            loading={index < 2 ? 'eager' : 'lazy'}
                                             decoding="async"
+                                            // @ts-expect-error fetchpriority attribute supported in modern browsers
+                                            fetchpriority={index === 0 ? 'high' : 'auto'}
                                             onError={() => handleImageError(index)}
                                             className="w-full h-auto block select-none"
                                         />

@@ -41,7 +41,18 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'appName' => config('app.name', 'Komikini'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'public_id' => $request->user()->public_id,
+                    'name' => $request->user()->name,
+                    'username' => $request->user()->username,
+                    'email' => $request->user()->email,
+                    'email_verified_at' => $request->user()->email_verified_at,
+                    'status' => $request->user()->status,
+                    'roles' => $request->user()->roles->pluck('name')->all(),
+                    'permissions' => $request->user()->getAllPermissions()->pluck('name')->all(),
+                    'can_access_admin' => $request->user()->can('dashboard.view') || $request->user()->hasAnyRole(['superadmin', 'admin', 'moderator']),
+                ] : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

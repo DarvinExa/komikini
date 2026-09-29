@@ -52,7 +52,16 @@ class KomikuProvider implements ComicProviderInterface
 
     public function latest(int $page = 1): ComicPage
     {
-        $endpoint = $page > 1 ? "/pustaka/page/{$page}" : '/terbaru';
+        $endpoint = $page > 1 ? "/terbaru/page/{$page}" : '/terbaru';
+        $data = $this->get($endpoint);
+
+        return $this->mapper->mapComicPage($data, $page);
+    }
+
+    public function byType(ComicType $type, int $page = 1): ComicPage
+    {
+        $typeName = ($type !== ComicType::UNKNOWN) ? $type->value : 'manga';
+        $endpoint = $page > 1 ? "/type/{$typeName}/page/{$page}" : "/type/{$typeName}";
         $data = $this->get($endpoint);
 
         return $this->mapper->mapComicPage($data, $page);

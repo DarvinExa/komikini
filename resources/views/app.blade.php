@@ -6,10 +6,14 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title inertia>{{ config('app.name', 'Komikini') }}</title>
+        <meta name="description" content="Platform baca komik manga, manhwa, dan manhua bahasa Indonesia tercepat, terlengkap, dan bebas gangguan.">
+        <meta property="og:site_name" content="{{ config('app.name', 'Komikini') }}">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary">
+        @if(app()->environment('staging') || config('app.env') === 'staging')
+            <meta name="robots" content="noindex, nofollow">
+        @endif
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])

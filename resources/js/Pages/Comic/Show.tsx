@@ -42,10 +42,26 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
     const cleanSynopsis = comic.synopsis?.trim() || 'Sinopsis belum tersedia untuk judul ini.';
     const isSynopsisLong = cleanSynopsis.length > 280;
 
+    const comicJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'ComicSeries',
+        name: comic.title,
+        headline: `Komik ${comic.title} Bahasa Indonesia`,
+        description: cleanSynopsis,
+        image: comic.thumbnail_url || undefined,
+        genre: comic.genres?.map((g) => g.name) || [],
+        inLanguage: 'id',
+        ...(comic.author ? { author: { '@type': 'Person', name: comic.author } } : {}),
+    };
+
     return (
         <AppLayout
             title={`Komik ${comic.title} Bahasa Indonesia`}
             description={cleanSynopsis.slice(0, 160)}
+            canonical={`/komik/${comic.slug}`}
+            ogImage={comic.thumbnail_url}
+            ogType="book"
+            jsonLd={comicJsonLd}
         >
             {/* Clear Back Button */}
             <div className="mb-6">

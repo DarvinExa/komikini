@@ -120,4 +120,26 @@ class CachedComicProviderTest extends TestCase
         $this->expectException(UpstreamUnavailableException::class);
         $cachedProvider->latest(1);
     }
+
+    public function test_by_type_caches_and_returns_comic_page(): void
+    {
+        $mockProvider = Mockery::mock(ComicProviderInterface::class);
+
+        $page = new ComicPage(
+            items: [],
+            currentPage: 1,
+            hasNextPage: true,
+        );
+
+        $mockProvider->shouldReceive('byType')
+            ->once()
+            ->with(ComicType::MANGA, 1)
+            ->andReturn($page);
+
+        $cachedProvider = new CachedComicProvider($mockProvider);
+        $result = $cachedProvider->byType(ComicType::MANGA, 1);
+
+        $this->assertInstanceOf(ComicPage::class, $result);
+        $this->assertTrue(Cache::has('v1:comic:type:manga:1:fresh'));
+    }
 }

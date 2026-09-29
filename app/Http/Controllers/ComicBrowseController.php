@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Contracts\ComicProviderInterface;
 use App\Enums\ComicType;
 use App\Exceptions\ComicProvider\ComicProviderException;
+use App\Services\Comic\ComicEnricher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -31,8 +32,8 @@ class ComicBrowseController extends Controller
 
             return Inertia::render('Comic/Browse', [
                 'title' => 'Komik Rilis Terbaru',
-                'description' => 'Daftar rilisan chapter komik terbaru dan terhangat.',
-                'comics' => $comicPage->toArray(),
+                'description' => 'Daftar rilisan chapter komik terbaru dan terhangat diurutkan berdasarkan waktu.',
+                'comics' => ComicEnricher::enrichPage($comicPage->toArray()),
                 'type' => null,
                 'genre' => null,
             ]);
@@ -44,7 +45,7 @@ class ComicBrowseController extends Controller
     }
 
     /**
-     * Browse comics by specific type (manga, manhwa, manhua).
+     * Browse comics by specific type (manga, manhwa, manhua) with pagination.
      */
     public function byType(Request $request, string $type): Response
     {
@@ -55,19 +56,15 @@ class ComicBrowseController extends Controller
             abort(404, "Tipe komik '{$type}' tidak ditemukan.");
         }
 
+        $page = max(1, (int) $request->input('page', 1));
+
         try {
-            $popular = $this->comicProvider->popular($comicType);
+            $comicPage = $this->comicProvider->byType($comicType, $page);
 
             return Inertia::render('Comic/Browse', [
-                'title' => 'Komik Populer '.ucfirst($comicType->value),
-                'description' => "Jelajahi komik berformat {$comicType->value} terpopuler.",
-                'comics' => [
-                    'items' => $popular->toArray(),
-                    'current_page' => 1,
-                    'has_next_page' => false,
-                    'has_prev_page' => false,
-                    'total_pages' => 1,
-                ],
+                'title' => 'Katalog Komik '.ucfirst($comicType->value),
+                'description' => "Jelajahi seluruh koleksi komik {$comicType->value} terlengkap di Komikini.",
+                'comics' => ComicEnricher::enrichPage($comicPage->toArray()),
                 'type' => $comicType->value,
                 'genre' => null,
             ]);
@@ -110,7 +107,7 @@ class ComicBrowseController extends Controller
             return Inertia::render('Comic/Browse', [
                 'title' => 'Genre: '.ucfirst(str_replace('-', ' ', $slug)),
                 'description' => "Daftar komik dalam kategori genre {$slug}.",
-                'comics' => $comicPage->toArray(),
+                'comics' => ComicEnricher::enrichPage($comicPage->toArray()),
                 'type' => null,
                 'genre' => $slug,
             ]);

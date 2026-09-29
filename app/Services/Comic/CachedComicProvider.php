@@ -80,6 +80,23 @@ class CachedComicProvider implements ComicProviderInterface
         return ComicCollection::fromArray($data);
     }
 
+    public function byType(ComicType $type, int $page = 1): ComicPage
+    {
+        $typeKey = $type ? $type->value : 'all';
+        $key = "{$this->prefix}:type:{$typeKey}:{$page}";
+        $freshTtl = (int) config('comic.cache.ttl.latest.fresh', 300);
+        $staleTtl = (int) config('comic.cache.ttl.latest.stale', 7200);
+
+        $data = $this->rememberWithStale(
+            $key,
+            $freshTtl,
+            $staleTtl,
+            fn (): array => $this->provider->byType($type, $page)->toArray()
+        );
+
+        return ComicPage::fromArray($data);
+    }
+
     public function search(string $query, int $page = 1): ComicPage
     {
         $normalizedQuery = md5(strtolower(trim($query)));

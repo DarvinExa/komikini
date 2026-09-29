@@ -1,0 +1,12 @@
+[Unit]
+Description=Komikini Scheduled Tasks Runner
+After=network.target postgresql.service redis-server.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/komikini/current
+ExecStart=/usr/bin/php /var/www/komikini/current/artisan schedule:run
+StandardOutput=null
+StandardError=journal

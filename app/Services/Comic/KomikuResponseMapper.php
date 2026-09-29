@@ -58,6 +58,9 @@ class KomikuResponseMapper
         $rawDesc = (string) ($data['description'] ?? $data['desc'] ?? $data['synopsis'] ?? '');
         $description = $rawDesc !== '' ? trim(strip_tags($rawDesc)) : null;
 
+        $rawTime = (string) ($data['relative_time'] ?? $data['uploaded_at'] ?? $data['time'] ?? '');
+        $relativeTime = $rawTime !== '' ? trim(strip_tags($rawTime)) : null;
+
         return new ComicItem(
             slug: $slug,
             title: $title,
@@ -66,6 +69,7 @@ class KomikuResponseMapper
             latestChapter: $latestChapter,
             rating: $rating,
             description: $description,
+            relativeTime: $relativeTime,
         );
     }
 
@@ -113,7 +117,7 @@ class KomikuResponseMapper
             }
         }
 
-        $hasNextPage = (bool) ($data['has_next_page'] ?? $data['hasNextPage'] ?? (count($items) >= 20));
+        $hasNextPage = (bool) ($data['has_next_page'] ?? $data['hasNextPage'] ?? (count($items) >= 24));
         $hasPrevPage = (bool) ($data['has_prev_page'] ?? $data['hasPrevPage'] ?? ($page > 1));
         $totalPages = isset($data['total_pages']) ? (int) $data['total_pages'] : null;
 

@@ -70,6 +70,7 @@ export default function Index({ tab = 'riwayat', histories, bookmarks, counts }:
         <AppLayout
             title="Pustaka Saya - Riwayat & Bookmark"
             description="Kelola riwayat baca komik dan daftar bookmark tersimpan Anda di Komikini."
+            noIndex={true}
         >
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
                 {/* Header Section */}

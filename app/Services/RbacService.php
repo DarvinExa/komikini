@@ -164,4 +164,23 @@ class RbacService
             ])
             ->log('user.suspended');
     }
+
+    /**
+     * Unsuspend a user and restore active status while logging the audit event.
+     */
+    public function unsuspendUser(User $actor, User $targetUser): void
+    {
+        $targetUser->update([
+            'status' => 'active',
+            'suspended_until' => null,
+        ]);
+
+        activity('rbac')
+            ->causedBy($actor)
+            ->performedOn($targetUser)
+            ->withProperties([
+                'status' => 'active',
+            ])
+            ->log('user.unsuspended');
+    }
 }

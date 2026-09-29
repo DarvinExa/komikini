@@ -72,6 +72,10 @@ return [
                 'fresh' => 21600,       // 6 hours
                 'stale' => 604800,      // 7 days
             ],
+            'ranking' => [
+                'fresh' => 900,         // 15 minutes
+                'stale' => 7200,        // 2 hours
+            ],
         ],
     ],
 
@@ -81,5 +85,12 @@ return [
     'views' => [
         'deduplication_hours' => (int) env('VIEW_DEDUPLICATION_HOURS', 6),
         'retention_days' => (int) env('RAW_VIEW_RETENTION_DAYS', 90),
+    ],
+
+    /*
+     * Internal popularity ranking configuration
+     */
+    'ranking' => [
+        'limit' => (int) env('RANKING_LIMIT', 50),
     ],
 ];
