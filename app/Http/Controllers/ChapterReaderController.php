@@ -47,20 +47,28 @@ class ChapterReaderController extends Controller
             }
 
             // Find or initialize local comic record
-            /** @var Comic $comic */
+            /** @var Comic|null $comic */
             $comic = Comic::where('slug', $slug)->first();
             if (! $comic) {
                 try {
                     $detail = $this->comicProvider->detail($slug);
                     $comic = Comic::upsertFromDetail($detail);
-                } catch (Throwable) {
-                    $comic = Comic::firstOrCreate(
-                        ['slug' => $slug],
-                        [
+                } catch (Throwable $e) {
+                    try {
+                        $comic = Comic::firstOrCreate(
+                            ['slug' => $slug],
+                            [
+                                'title' => ucwords(str_replace('-', ' ', $slug)),
+                                'comic_type' => ComicType::UNKNOWN->value,
+                            ]
+                        );
+                    } catch (Throwable) {
+                        $comic = new Comic([
+                            'slug' => $slug,
                             'title' => ucwords(str_replace('-', ' ', $slug)),
                             'comic_type' => ComicType::UNKNOWN->value,
-                        ]
-                    );
+                        ]);
+                    }
                 }
             }
 
@@ -68,16 +76,18 @@ class ChapterReaderController extends Controller
             $visitorHash = hash('sha256', ($request->ip() ?? '127.0.0.1').'|'.($request->userAgent() ?? ''));
             $userId = $request->user()?->id;
 
-            try {
-                RecordQualifiedView::dispatch(
-                    $comic->id,
-                    $payload->chapterKey,
-                    $userId,
-                    $visitorHash,
-                    now()
-                );
-            } catch (Throwable $e) {
-                Log::warning("Gagal dispatch RecordQualifiedView untuk komik [{$slug}] chapter [{$chapter}]: {$e->getMessage()}");
+            if ($comic->id) {
+                try {
+                    RecordQualifiedView::dispatch(
+                        $comic->id,
+                        $payload->chapterKey,
+                        $userId,
+                        $visitorHash,
+                        now()
+                    );
+                } catch (Throwable $e) {
+                    Log::warning("Gagal dispatch RecordQualifiedView untuk komik [{$slug}] chapter [{$chapter}]: {$e->getMessage()}");
+                }
             }
 
             $chapterData = $payload->toArray();
