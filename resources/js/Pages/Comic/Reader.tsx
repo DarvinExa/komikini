@@ -310,7 +310,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                 ) : (
                     <div
                         onClick={toggleControls}
-                        className="flex flex-col items-center gap-0 w-full cursor-pointer leading-none text-[0px]"
+                        className="w-full block leading-none text-[0px] cursor-pointer"
                         title="Tap layar untuk menampilkan atau menyembunyikan navigasi"
                     >
                         {images.map((imgUrl, index) => {
@@ -324,7 +324,9 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                         imageRefs.current[index] = el;
                                     }}
                                     data-page-index={pageNumber}
-                                    className="w-full relative block leading-none m-0 p-0 text-[0px] bg-[#0A0A0A]"
+                                    className={`w-full relative block leading-none m-0 p-0 text-[0px] ${
+                                        index > 0 ? '-mt-[1px]' : ''
+                                    }`}
                                 >
                                     {isFailed ? (
                                         <div
@@ -362,7 +364,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                             // @ts-expect-error fetchpriority attribute supported in modern browsers
                                             fetchpriority={index === 0 ? 'high' : 'auto'}
                                             onError={() => handleImageError(index)}
-                                            className="w-full h-auto block select-none m-0 p-0 border-0 align-top"
+                                            className="w-full h-auto block select-none m-0 p-0 border-0 outline-none align-top [transform:translateZ(0)]"
                                         />
                                     )}
                                 </div>
@@ -423,9 +425,13 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
             {/* Mobile Bottom Ergonomic Bar with Auto-hide / Tap-to-toggle */}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111]/95 backdrop-blur-md border-t-2 border-[#222222] px-3 py-2 flex items-center justify-between gap-2 transition-transform duration-300 ease-in-out ${
+                className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t-2 border-[#222222] px-3 pt-2 flex items-center justify-between gap-2 transition-transform duration-300 ease-in-out after:content-[''] after:absolute after:top-full after:left-0 after:right-0 after:h-24 after:bg-[#111111] after:pointer-events-none ${
                     showControls ? 'translate-y-0' : 'translate-y-full pointer-events-none'
                 }`}
+                style={{
+                    bottom: 0,
+                    paddingBottom: 'max(8px, env(safe-area-inset-bottom, 0px))',
+                }}
             >
                 <Link
                     href={`/komik/${comic.slug}`}
