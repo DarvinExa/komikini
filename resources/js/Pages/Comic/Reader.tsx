@@ -26,6 +26,13 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
     const [activePage, setActivePage] = useState<number>(initialIndex > 0 ? initialIndex + 1 : 1);
     // Track scroll percentage
     const [scrollPercent, setScrollPercent] = useState<number>(0);
+    // Floating controls visibility (auto-hide on scroll down, reveal on scroll up or tap)
+    const [showControls, setShowControls] = useState<boolean>(true);
+    const lastScrollY = useRef<number>(0);
+
+    const toggleControls = () => {
+        setShowControls((prev) => !prev);
+    };
 
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -91,15 +98,32 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [chapter.prev_chapter_key, chapter.next_chapter_key, comic.slug]);
 
-    // Scroll progress tracker
+    // Scroll progress tracker & auto-hide controls on scroll down / show on scroll up
     useEffect(() => {
         const handleScroll = () => {
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const currentScrollY = window.scrollY || document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
             if (scrollHeight > 0) {
-                const percent = Math.min(100, Math.max(0, Math.round((scrollTop / scrollHeight) * 100)));
+                const percent = Math.min(100, Math.max(0, Math.round((currentScrollY / scrollHeight) * 100)));
                 setScrollPercent(percent);
             }
+
+            const diff = currentScrollY - lastScrollY.current;
+
+            // When near the very top of page, always show controls
+            if (currentScrollY < 60) {
+                setShowControls(true);
+            } else if (Math.abs(diff) > 12) {
+                if (diff > 0) {
+                    // Scrolling DOWN -> hide controls for distraction-free reading
+                    setShowControls(false);
+                } else {
+                    // Scrolling UP -> reveal controls for easy navigation
+                    setShowControls(true);
+                }
+            }
+
+            lastScrollY.current = currentScrollY;
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
@@ -182,8 +206,13 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                 />
             </div>
 
-            {/* Sticky Minimal Header */}
-            <header className="sticky top-0 z-40 bg-[#111111] border-b-2 border-[#222222] w-full max-w-full">
+            {/* Floating Minimal Header with Auto-hide / Tap-to-toggle */}
+            <header
+                onClick={(e) => e.stopPropagation()}
+                className={`fixed top-0 left-0 right-0 z-40 bg-[#111111]/95 backdrop-blur-md border-b-2 border-[#222222] w-full max-w-full transition-transform duration-300 ease-in-out ${
+                    showControls ? 'translate-y-0' : '-translate-y-full pointer-events-none'
+                }`}
+            >
                 <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-3">
                     {/* Left: Back Link & Title */}
                     <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -262,7 +291,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
             </header>
 
             {/* Main Long-Strip Reader Area */}
-            <main id="reader-strip" className="w-full max-w-[768px] mx-auto min-w-0 px-0 sm:px-2 py-2 sm:py-6">
+            <main id="reader-strip" className="w-full max-w-[768px] mx-auto min-w-0 px-0 sm:px-2 pt-14 pb-20 sm:pb-12">
                 {images.length === 0 ? (
                     <div className="my-16 mx-4 p-8 text-center bg-[#161616] border-2 border-[#333333] rounded-none">
                         <p className="font-display text-xl uppercase tracking-wider text-[#F8F8F8] mb-2">
@@ -279,7 +308,11 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                         </Link>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center gap-0 w-full">
+                    <div
+                        onClick={toggleControls}
+                        className="flex flex-col items-center gap-0 w-full cursor-pointer leading-none text-[0px]"
+                        title="Tap layar untuk menampilkan atau menyembunyikan navigasi"
+                    >
                         {images.map((imgUrl, index) => {
                             const isFailed = failedImages[index];
                             const pageNumber = index + 1;
@@ -291,10 +324,13 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                         imageRefs.current[index] = el;
                                     }}
                                     data-page-index={pageNumber}
-                                    className="w-full relative min-h-[400px] flex items-center justify-center bg-[#0d0d0d] overflow-hidden"
+                                    className="w-full relative block leading-none m-0 p-0 text-[0px] bg-[#0A0A0A]"
                                 >
                                     {isFailed ? (
-                                        <div className="w-full py-16 px-4 bg-[#161616] border-2 border-[#444444] text-center my-2 rounded-none">
+                                        <div
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-full py-16 px-4 bg-[#161616] border-2 border-[#444444] text-center my-2 rounded-none text-base"
+                                        >
                                             <div className="inline-block p-2 bg-[#222222] text-[#E56458] mb-3">
                                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -308,7 +344,10 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                             </p>
                                             <button
                                                 type="button"
-                                                onClick={() => handleRetryImage(index)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRetryImage(index);
+                                                }}
                                                 className="px-4 py-2 font-display text-xs tracking-wider uppercase bg-[#111111] hover:bg-[#BAD306] text-[#F8F8F8] hover:text-[#111111] border border-[#444444] hover:border-[#BAD306] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#BAD306] rounded-none font-bold"
                                             >
                                                 Coba Lagi
@@ -318,12 +357,12 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                                         <img
                                             src={getImageSrc(imgUrl, index)}
                                             alt={`Halaman ${pageNumber}`}
-                                            loading={index < 2 ? 'eager' : 'lazy'}
+                                            loading={index < 3 ? 'eager' : 'lazy'}
                                             decoding="async"
                                             // @ts-expect-error fetchpriority attribute supported in modern browsers
                                             fetchpriority={index === 0 ? 'high' : 'auto'}
                                             onError={() => handleImageError(index)}
-                                            className="w-full h-auto block select-none"
+                                            className="w-full h-auto block select-none m-0 p-0 border-0 align-top"
                                         />
                                     )}
                                 </div>
@@ -334,6 +373,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
 
                 {/* End of Chapter Section */}
                 <section
+                    onClick={(e) => e.stopPropagation()}
                     aria-label="Selesai Membaca Chapter"
                     className="mt-8 mb-16 mx-3 sm:mx-0 p-6 bg-[#161616] border-2 border-[#222222] text-center rounded-none"
                 >
@@ -371,18 +411,25 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                 </section>
 
                 {/* Community Comments & Discussion */}
-                <CommentSection
-                    comicSlug={comic.slug}
-                    chapterKey={chapter.chapter_key}
-                    currentUser={auth.user}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                    <CommentSection
+                        comicSlug={comic.slug}
+                        chapterKey={chapter.chapter_key}
+                        currentUser={auth.user}
+                    />
+                </div>
             </main>
 
-            {/* Mobile Bottom Ergonomic Bar */}
-            <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t-2 border-[#222222] px-3 py-2 flex items-center justify-between gap-2">
+            {/* Mobile Bottom Ergonomic Bar with Auto-hide / Tap-to-toggle */}
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111]/95 backdrop-blur-md border-t-2 border-[#222222] px-3 py-2 flex items-center justify-between gap-2 transition-transform duration-300 ease-in-out ${
+                    showControls ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+                }`}
+            >
                 <Link
                     href={`/komik/${comic.slug}`}
-                    className="p-2 text-[#AAAAAA] hover:text-[#F8F8F8] border border-[#333333] bg-[#161616] rounded-none"
+                    className="p-2 text-[#AAAAAA] hover:text-[#F8F8F8] border border-[#333333] bg-[#161616] rounded-none shrink-0"
                     aria-label="Kembali ke detail"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,11 +447,11 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                     </span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                     {chapter.prev_chapter_key ? (
                         <Link
                             href={`/komik/${comic.slug}/${chapter.prev_chapter_key}`}
-                            className="px-2.5 py-1.5 font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#444444] rounded-none"
+                            className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-[#F8F8F8] bg-[#161616] border border-[#444444] hover:border-[#BAD306] hover:text-[#BAD306] transition-colors rounded-none"
                         >
                             Prev
                         </Link>
@@ -412,7 +459,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                         <button
                             type="button"
                             disabled
-                            className="px-2.5 py-1.5 font-display text-xs tracking-wider uppercase text-[#444444] bg-[#161616] border border-[#222222] cursor-not-allowed rounded-none"
+                            className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-[#444444] bg-[#161616] border border-[#222222] cursor-not-allowed rounded-none"
                         >
                             Prev
                         </button>
@@ -421,7 +468,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                     {chapter.next_chapter_key ? (
                         <Link
                             href={`/komik/${comic.slug}/${chapter.next_chapter_key}`}
-                            className="px-2.5 py-1.5 font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] border border-[#BAD306] font-bold rounded-none"
+                            className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-[#111111] bg-[#BAD306] hover:bg-[#E0FF00] border-2 border-[#BAD306] font-bold transition-colors rounded-none"
                         >
                             Next
                         </Link>
@@ -429,7 +476,7 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
                         <button
                             type="button"
                             disabled
-                            className="px-2.5 py-1.5 font-display text-xs tracking-wider uppercase text-[#444444] bg-[#161616] border border-[#222222] cursor-not-allowed rounded-none"
+                            className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-[#444444] bg-[#161616] border border-[#222222] cursor-not-allowed rounded-none"
                         >
                             Next
                         </button>
