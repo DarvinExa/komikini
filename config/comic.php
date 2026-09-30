@@ -12,7 +12,7 @@ return [
      * Komiku upstream provider configuration
      */
     'komiku' => [
-        'base_url' => env('KOMIKU_API_BASE_URL', 'https://komiku-rest-api.vercel.app'),
+        'base_url' => env('KOMIKU_API_BASE_URL', 'https://komik-api-wine.vercel.app'),
         'connect_timeout' => (int) env('KOMIKU_CONNECT_TIMEOUT', 3),
         'timeout' => (int) env('KOMIKU_TIMEOUT', 8),
         'max_retries' => (int) env('KOMIKU_MAX_RETRIES', 2),
