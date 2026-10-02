@@ -20,9 +20,9 @@ class ImageUrlValidator
     }
 
     /**
-     * Validate an image URL and return the sanitized URL string, or null if invalid.
+     * Normalize known CDN image hosts to avoid ISP DNS64 local IP synthesis and Chrome PNA blocks.
      */
-    public function sanitize(?string $url): ?string
+    public function normalize(?string $url): ?string
     {
         if ($url === null) {
             return null;
@@ -30,6 +30,25 @@ class ImageUrlValidator
 
         $url = trim($url);
         if ($url === '') {
+            return null;
+        }
+
+        // Normalize thumbnail domain to thumbnail.komiku.org (Cloudflare Anycast IPv6)
+        $url = str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $url);
+
+        // Normalize image CDN subdomains to img.komiku.org (Cloudflare Anycast IPv6)
+        $url = (string) preg_replace('#https?://(?:img|image\d*)\.komiku\.to/#i', 'https://img.komiku.org/', $url);
+
+        return $url;
+    }
+
+    /**
+     * Validate an image URL and return the sanitized URL string, or null if invalid.
+     */
+    public function sanitize(?string $url): ?string
+    {
+        $url = $this->normalize($url);
+        if ($url === null) {
             return null;
         }
 

@@ -3,6 +3,7 @@ import { Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { BookmarkItem, ReadingHistoryItem } from '@/types';
 import { Pagination } from '@/Components/Pagination';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 interface PaginatedData<T> {
     data: T[];
@@ -167,7 +168,7 @@ export default function Index({ tab = 'riwayat', histories, bookmarks, counts }:
                                                 >
                                                     {item.comic_thumbnail ? (
                                                         <img
-                                                            src={item.comic_thumbnail}
+                                                            src={normalizeImageUrl(item.comic_thumbnail)}
                                                             alt={item.comic_title}
                                                             className="w-full h-full object-cover"
                                                             onError={(e) => {
@@ -293,7 +294,7 @@ export default function Index({ tab = 'riwayat', histories, bookmarks, counts }:
                                         <Link href={`/komik/${item.comic_slug}`} className="block relative aspect-[3/4] bg-[#111111] overflow-hidden">
                                             {item.comic_thumbnail ? (
                                                 <img
-                                                    src={item.comic_thumbnail}
+                                                    src={normalizeImageUrl(item.comic_thumbnail)}
                                                     alt={item.comic_title}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                                     onError={(e) => {

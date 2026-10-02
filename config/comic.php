@@ -31,6 +31,7 @@ return [
         'komik-api-wine.vercel.app',
         'img.komiku.id',
         'img.komiku.org',
+        'thumbnail.komiku.org',
         'cdn.komiku.id',
         'i0.wp.com',
         'i1.wp.com',

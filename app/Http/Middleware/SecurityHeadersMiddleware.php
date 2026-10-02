@@ -22,11 +22,11 @@ class SecurityHeadersMiddleware
         // 1. Content-Security-Policy (CSP) baseline without unsafe-eval
         $cspPolicy = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+            "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data: https: blob:",
-            "connect-src 'self' https://challenges.cloudflare.com",
+            "connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com",
             "frame-src 'self' https://challenges.cloudflare.com",
             "frame-ancestors 'none'",
             "object-src 'none'",

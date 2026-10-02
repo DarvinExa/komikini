@@ -67,4 +67,20 @@ class ImageUrlValidatorTest extends TestCase
         $this->assertNull($this->validator->sanitize(''));
         $this->assertNull($this->validator->sanitize(null));
     }
+
+    public function test_normalizes_komiku_domains_to_komiku_org(): void
+    {
+        $this->assertSame(
+            'https://thumbnail.komiku.org/new/img/images/cover.webp',
+            $this->validator->normalize('https://thumbnail.komiku.to/new/img/images/cover.webp')
+        );
+        $this->assertSame(
+            'https://img.komiku.org/uploads2/page1.jpg',
+            $this->validator->normalize('https://image2.komiku.to/uploads2/page1.jpg')
+        );
+        $this->assertSame(
+            'https://img.komiku.org/uploads/page2.jpg',
+            $this->validator->normalize('https://img.komiku.to/uploads/page2.jpg')
+        );
+    }
 }

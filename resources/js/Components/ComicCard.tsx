@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { ComicItem } from '@/types';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 interface ComicCardProps {
     comic: ComicItem;
@@ -28,7 +29,7 @@ export const ComicCard: React.FC<ComicCardProps> = ({ comic, index = 0 }) => {
             <div className="w-full aspect-[3/4] bg-[#191919] overflow-hidden">
                 {comic.thumbnail_url ? (
                     <img
-                        src={comic.thumbnail_url}
+                        src={normalizeImageUrl(comic.thumbnail_url)}
                         alt={comic.title}
                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                         loading="lazy"

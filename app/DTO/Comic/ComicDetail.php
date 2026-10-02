@@ -32,11 +32,16 @@ readonly class ComicDetail
      */
     public function toArray(): array
     {
+        $thumb = $this->thumbnailUrl;
+        if ($thumb !== null) {
+            $thumb = str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $thumb);
+        }
+
         return [
             'slug' => $this->slug,
             'title' => $this->title,
             'alternative_title' => $this->alternativeTitle,
-            'thumbnail_url' => $this->thumbnailUrl,
+            'thumbnail_url' => $thumb,
             'comic_type' => $this->comicType->value,
             'publication_status' => $this->publicationStatus,
             'author' => $this->author,
@@ -63,11 +68,16 @@ readonly class ComicDetail
             $data['chapters'] ?? []
         );
 
+        $thumb = isset($data['thumbnail_url']) ? (string) $data['thumbnail_url'] : null;
+        if ($thumb !== null) {
+            $thumb = str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $thumb);
+        }
+
         return new self(
             slug: (string) ($data['slug'] ?? ''),
             title: (string) ($data['title'] ?? ''),
             alternativeTitle: isset($data['alternative_title']) ? (string) $data['alternative_title'] : null,
-            thumbnailUrl: isset($data['thumbnail_url']) ? (string) $data['thumbnail_url'] : null,
+            thumbnailUrl: $thumb,
             comicType: ComicType::fromUpstream($data['comic_type'] ?? null),
             publicationStatus: isset($data['publication_status']) ? (string) $data['publication_status'] : null,
             author: isset($data['author']) ? (string) $data['author'] : null,

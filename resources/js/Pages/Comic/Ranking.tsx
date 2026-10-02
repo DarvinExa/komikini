@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 interface RankedComic {
     rank_position: number;
@@ -163,7 +164,7 @@ export default function Ranking({
                                     >
                                         {item.comic.thumbnail_url ? (
                                             <img
-                                                src={item.comic.thumbnail_url}
+                                                src={normalizeImageUrl(item.comic.thumbnail_url)}
                                                 alt=""
                                                 loading="lazy"
                                                 decoding="async"

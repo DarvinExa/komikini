@@ -26,10 +26,15 @@ readonly class ComicItem
      */
     public function toArray(): array
     {
+        $thumbnail = $this->thumbnailUrl;
+        if ($thumbnail !== null) {
+            $thumbnail = str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $thumbnail);
+        }
+
         return [
             'slug' => $this->slug,
             'title' => $this->title,
-            'thumbnail_url' => $this->thumbnailUrl,
+            'thumbnail_url' => $thumbnail,
             'comic_type' => $this->comicType->value,
             'latest_chapter' => $this->latestChapter,
             'rating' => $this->rating,
@@ -45,10 +50,15 @@ readonly class ComicItem
      */
     public static function fromArray(array $data): self
     {
+        $thumb = isset($data['thumbnail_url']) ? (string) $data['thumbnail_url'] : null;
+        if ($thumb !== null) {
+            $thumb = str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $thumb);
+        }
+
         return new self(
             slug: (string) ($data['slug'] ?? ''),
             title: (string) ($data['title'] ?? ''),
-            thumbnailUrl: isset($data['thumbnail_url']) ? (string) $data['thumbnail_url'] : null,
+            thumbnailUrl: $thumb,
             comicType: ComicType::fromUpstream($data['comic_type'] ?? null),
             latestChapter: isset($data['latest_chapter']) ? (string) $data['latest_chapter'] : null,
             rating: isset($data['rating']) ? (string) $data['rating'] : null,

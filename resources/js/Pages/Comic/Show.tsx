@@ -3,6 +3,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { ComicDetail, PageProps, UserHistory } from '@/types';
 import { ChapterList } from '@/Components/ChapterList';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 interface ShowProps {
     comic: ComicDetail;
@@ -42,13 +43,15 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
     const cleanSynopsis = comic.synopsis?.trim() || 'Sinopsis belum tersedia untuk judul ini.';
     const isSynopsisLong = cleanSynopsis.length > 280;
 
+    const normalizedThumbnail = normalizeImageUrl(comic.thumbnail_url);
+
     const comicJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'ComicSeries',
         name: comic.title,
         headline: `Komik ${comic.title} Bahasa Indonesia`,
         description: cleanSynopsis,
-        image: comic.thumbnail_url || undefined,
+        image: normalizedThumbnail || undefined,
         genre: comic.genres?.map((g) => g.name) || [],
         inLanguage: 'id',
         ...(comic.author ? { author: { '@type': 'Person', name: comic.author } } : {}),
@@ -59,7 +62,7 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
             title={`Komik ${comic.title} Bahasa Indonesia`}
             description={cleanSynopsis.slice(0, 160)}
             canonical={`/komik/${comic.slug}`}
-            ogImage={comic.thumbnail_url}
+            ogImage={normalizedThumbnail}
             ogType="book"
             jsonLd={comicJsonLd}
         >
@@ -84,7 +87,7 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
                         <div className="relative aspect-[3/4] w-full bg-[#111111] border-2 border-[#444444] overflow-hidden">
                             {comic.thumbnail_url ? (
                                 <img
-                                    src={comic.thumbnail_url}
+                                    src={normalizedThumbnail}
                                     alt={`Sampul komik ${comic.title}`}
                                     className="h-full w-full object-cover rounded-none"
                                     onError={(e) => {

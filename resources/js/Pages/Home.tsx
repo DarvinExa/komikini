@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { ComicItem, ComicPage, Genre } from '@/types';
 import { StaleBanner } from '@/Components/StaleBanner';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 export interface ContinueReadingItem {
     id: number;
@@ -149,7 +150,7 @@ export default function Home({
                                 <div className="w-[64px] h-[86px] max-sm:w-[62px] max-sm:h-[82px] bg-[#191919] shrink-0 overflow-hidden">
                                     {item.comic_thumbnail ? (
                                         <img
-                                            src={item.comic_thumbnail}
+                                            src={normalizeImageUrl(item.comic_thumbnail)}
                                             alt={`Cover ${item.comic_title}`}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                             loading="lazy"
@@ -206,7 +207,7 @@ export default function Home({
                             >
                                 {leadLatest.thumbnail_url ? (
                                     <img
-                                        src={leadLatest.thumbnail_url}
+                                        src={normalizeImageUrl(leadLatest.thumbnail_url)}
                                         alt={`Cover ${leadLatest.title}`}
                                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                         loading="lazy"
@@ -258,7 +259,7 @@ export default function Home({
                                 <div className="w-[52px] h-[68px] bg-[#191919] shrink-0 overflow-hidden">
                                     {item.thumbnail_url ? (
                                         <img
-                                            src={item.thumbnail_url}
+                                            src={normalizeImageUrl(item.thumbnail_url)}
                                             alt={item.title}
                                             className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                             loading="lazy"
@@ -343,7 +344,7 @@ export default function Home({
                             <div className="w-[108px] h-[142px] max-sm:w-[84px] max-sm:h-[112px] bg-[#191919] shrink-0 overflow-hidden">
                                 {firstRank.thumbnail_url ? (
                                     <img
-                                        src={firstRank.thumbnail_url}
+                                        src={normalizeImageUrl(firstRank.thumbnail_url)}
                                         alt={`Peringkat 1: ${firstRank.title}`}
                                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                         loading="lazy"
@@ -383,7 +384,7 @@ export default function Home({
                             <div className="w-[60px] h-[78px] max-sm:w-[50px] max-sm:h-[65px] bg-[#191919] shrink-0 overflow-hidden">
                                 {item.thumbnail_url ? (
                                     <img
-                                        src={item.thumbnail_url}
+                                        src={normalizeImageUrl(item.thumbnail_url)}
                                         alt={`Peringkat ${item.rank}: ${item.title}`}
                                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                         loading="lazy"
@@ -432,7 +433,7 @@ export default function Home({
                             <div className="w-[112px] h-[148px] max-sm:w-[88px] max-sm:h-[116px] bg-[#191919] shrink-0 overflow-hidden">
                                 {item.thumbnail_url ? (
                                     <img
-                                        src={item.thumbnail_url}
+                                        src={normalizeImageUrl(item.thumbnail_url)}
                                         alt={item.title}
                                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                         loading="lazy"
@@ -513,7 +514,7 @@ export default function Home({
                             <div className="w-full aspect-[3/4] bg-[#191919] overflow-hidden">
                                 {item.thumbnail_url ? (
                                     <img
-                                        src={item.thumbnail_url}
+                                        src={normalizeImageUrl(item.thumbnail_url)}
                                         alt={item.title}
                                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
                                         loading="lazy"

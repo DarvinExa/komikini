@@ -3,6 +3,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { ChapterPayload, PageProps } from '@/types';
 import CommentSection from '@/Components/CommentSection';
 import { SeoHead } from '@/Components/SeoHead';
+import { normalizeImageUrl } from '@/utils/imageUrl';
 
 interface ReaderProps {
     comic: {
@@ -166,10 +167,11 @@ export default function Reader({ comic, chapter, initialIndex = 0 }: ReaderProps
     };
 
     const getImageSrc = (url: string, index: number) => {
+        const normalized = normalizeImageUrl(url);
         const count = retryCounters[index] || 0;
-        if (count === 0) return url;
-        const separator = url.includes('?') ? '&' : '?';
-        return `${url}${separator}retry=${count}`;
+        if (count === 0) return normalized;
+        const separator = normalized.includes('?') ? '&' : '?';
+        return `${normalized}${separator}retry=${count}`;
     };
 
     const chapterJsonLd = {

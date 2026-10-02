@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\DTO\Comic\ComicDetail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,6 +43,17 @@ class Comic extends Model
             'upstream_payload' => 'array',
             'last_synced_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Normalize thumbnail URLs to komiku.org to avoid Chrome PNA/CORS blocks.
+     */
+    protected function thumbnailUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $value) : null,
+            set: fn (?string $value) => $value ? str_replace('thumbnail.komiku.to', 'thumbnail.komiku.org', $value) : null,
+        );
     }
 
     /**
