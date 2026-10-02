@@ -45,13 +45,17 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
 
     const normalizedThumbnail = normalizeImageUrl(comic.thumbnail_url);
 
+    const ogCover = comic.thumbnail_url?.startsWith('http')
+        ? comic.thumbnail_url
+        : (normalizedThumbnail ? `https://komikini.my.id${normalizedThumbnail}` : undefined);
+
     const comicJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'ComicSeries',
         name: comic.title,
         headline: `Komik ${comic.title} Bahasa Indonesia`,
         description: cleanSynopsis,
-        image: normalizedThumbnail || undefined,
+        image: ogCover,
         genre: comic.genres?.map((g) => g.name) || [],
         inLanguage: 'id',
         ...(comic.author ? { author: { '@type': 'Person', name: comic.author } } : {}),
@@ -62,7 +66,7 @@ export default function Show({ comic, userHistory, isBookmarked = false }: ShowP
             title={`Komik ${comic.title} Bahasa Indonesia`}
             description={cleanSynopsis.slice(0, 160)}
             canonical={`/komik/${comic.slug}`}
-            ogImage={normalizedThumbnail}
+            ogImage={ogCover}
             ogType="book"
             jsonLd={comicJsonLd}
         >

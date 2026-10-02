@@ -15,6 +15,7 @@ use App\Http\Controllers\ComicRankingController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageProxyController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReadingProgressController;
@@ -30,6 +31,9 @@ Route::get('/health/upstream', [HealthController::class, 'upstream'])->name('hea
 // SEO & Crawler Endpoints
 Route::get('/robots.txt', RobotsController::class)->name('seo.robots');
 Route::get('/sitemap.xml', SitemapController::class)->name('seo.sitemap');
+
+// Image Proxy Endpoint (Bypasses ISP DNS64 local ULA synthesis & Chrome PNA CORS blocks)
+Route::get('/img-proxy', ImageProxyController::class)->name('image.proxy');
 
 // Public Discovery, Reader, Ranking & Comment Routes
 Route::get('/', HomeController::class)->name('home');
