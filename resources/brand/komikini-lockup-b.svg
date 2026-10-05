@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 776 256" width="776" height="256" role="img" aria-labelledby="title-lockup-b">
+  <title id="title-lockup-b">Komikini Logo Lockup B</title>
+  <g id="symbol">
+    <path fill="#111111" fill-rule="evenodd" d="
+M 61 53 H 100 V 121 H 61 Z
+M 61 136 H 100 V 203 H 61 Z
+M 112 98 L 157 53 H 199 V 74 L 154 119 H 112 Z
+M 112 137 H 154 L 199 182 V 203 H 157 L 112 158 Z
+"/>
+  </g>
+  <g id="wordmark">
+    <path fill="#111111" fill-rule="evenodd" d="M 246 88 H 264 V 168 H 246 Z M 272 120 L 286 88 H 302 V 104 L 288 120 Z M 272 136 H 288 L 302 152 V 168 H 286 Z M 318 88 H 378 V 168 H 318 Z M 336 106 V 150 H 360 V 106 Z M 394 88 H 412 V 168 H 394 Z M 448 88 H 466 V 168 H 448 Z M 412 88 L 430 124 L 448 88 H 436 L 430 112 L 424 88 Z M 482 88 H 500 V 168 H 482 Z M 516 88 H 534 V 168 H 516 Z M 542 120 L 556 88 H 572 V 104 L 558 120 Z M 542 136 H 558 L 572 152 V 168 H 556 Z M 588 88 H 606 V 168 H 588 Z M 622 88 H 640 V 168 H 622 Z M 664 88 H 682 V 168 H 664 Z M 640 88 H 652 L 664 156 V 168 H 652 L 640 100 Z M 698 88 H 716 V 168 H 698 Z"/>
+  </g>
+</svg>

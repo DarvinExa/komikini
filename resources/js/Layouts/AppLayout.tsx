@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { SearchBox } from '@/Components/SearchBox';
 import { SeoHead, SeoHeadProps } from '@/Components/SeoHead';
+import { BrandLogo } from '@/Components/BrandLogo';
 
 interface AppLayoutProps extends SeoHeadProps {
     children: ReactNode;
@@ -82,12 +83,10 @@ export default function AppLayout({
                         {/* Brand / Logo */}
                         <Link
                             href="/"
-                            className="inline-flex items-center font-display font-bold text-[22px] max-sm:text-lg tracking-wider text-[#f3f3ef] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#bdd600]"
+                            className="inline-flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#bdd600] py-1"
+                            aria-label="Komikini Beranda"
                         >
-                            <span>KOMIKINI</span>
-                            <span className="inline-grid place-items-center w-[25px] h-[25px] max-sm:w-[22px] max-sm:h-[22px] ml-2 bg-[#bdd600] text-[#101010] font-sans font-bold text-sm max-sm:text-xs">
-                                K
-                            </span>
+                            <BrandLogo variant="full" className="h-[28px] max-sm:h-[22px] w-auto" />
                         </Link>
 
                         {/* Search Desktop / Tablet */}
@@ -325,8 +324,10 @@ export default function AppLayout({
             {/* Footer */}
             <footer className="border-t border-[#303030] bg-[#0d0d0d] py-8 text-xs text-[#aaa9a3] max-sm:pb-24">
                 <div className="w-[min(1280px,calc(100%-40px))] max-sm:w-[calc(100%-24px)] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-center sm:text-left">
-                        <span className="font-display text-lg tracking-wider text-[#f3f3ef] uppercase">{appName}</span>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-left">
+                        <Link href="/" className="inline-flex items-center" aria-label="Komikini Beranda">
+                            <BrandLogo variant="full" className="h-6 w-auto" />
+                        </Link>
                         <span className="text-xs text-[#aaa9a3]">Platform Baca Manga, Manhwa, dan Manhua Bahasa Indonesia.</span>
                     </div>
                     {correlationId && (

@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><g transform="translate(-29.31 -29.31) scale(1.229)" fill="#bdd600">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title-a">
   <title id="title-a">Komikini - 3-Koma Panel K</title>
   <path fill="#bdd600" fill-rule="evenodd" d="
     M 36 28 H 88 V 228 H 36 Z
     M 104 88 L 164 28 H 220 V 56 L 160 116 H 104 Z
     M 104 140 H 160 L 220 200 V 228 H 164 L 104 168 Z
   "/>
-</g></svg>
+</svg>

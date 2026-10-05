@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title-c">
+  <title id="title-c">Komikini - Fuki-dashi Dialogue Emblem</title>
+  <path fill="#111111" fill-rule="evenodd" d="
+    M 24 24 H 232 V 192 H 192 L 192 232 L 152 192 H 24 Z
+    M 60 56 H 92 V 160 H 60 Z
+    M 108 92 L 144 56 H 180 V 76 L 144 112 H 108 Z
+    M 108 128 H 144 L 180 160 H 144 L 108 128 Z
+  "/>
+</svg>

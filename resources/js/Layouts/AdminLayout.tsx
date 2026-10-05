@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { BrandLogo } from '@/Components/BrandLogo';
 
 interface AdminLayoutProps {
     title: string;
@@ -62,10 +63,10 @@ export default function AdminLayout({ title, description, children }: AdminLayou
                 <div>
                     {/* Header / Brand */}
                     <div className="p-4 md:p-6 border-b border-[#262626] bg-[#111111]">
-                        <div className="flex items-center gap-2">
-                            <span className="font-display text-xl tracking-wider uppercase text-[#F8F8F8]">
-                                {appName}
-                            </span>
+                        <div className="flex items-center gap-2.5">
+                            <Link href="/" className="inline-flex items-center" aria-label="Ke Beranda">
+                                <BrandLogo variant="full" className="h-5 w-auto" />
+                            </Link>
                             <span className="font-display text-[9px] tracking-widest text-[#111111] bg-[#BAD306] px-1.5 py-0.5 font-bold uppercase">
                                 ADMIN
                             </span>
